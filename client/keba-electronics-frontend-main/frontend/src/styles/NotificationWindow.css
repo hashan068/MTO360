@@ -1,0 +1,26 @@
+/* NotificationWindow.css */
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.notification-item.unread {
+  font-weight: bold;
+}
+
+.notification-message {
+  flex-grow: 1;
+}
+
+.notification-timestamp {
+  color: #888;
+  margin-left: 10px;
+}
+
+.read-indicator {
+  color: green;
+  margin-left: 10px;
+}

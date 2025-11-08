@@ -1,0 +1,58 @@
+/* styles/drawer.css */
+
+.drawer-root {
+  width: 250px;
+  background-color: #263238;
+  color: white;
+  height: 100%;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: #263238;
+}
+
+.drawer-logo {
+  height: 50px;
+  width: auto;
+}
+
+.drawer-list {
+  margin-top: 20px;
+}
+
+.drawer-list-item {
+  padding: 10px 20px;
+  color: white;
+}
+
+.drawer-list-item:hover {
+  background-color: #37474f;
+}
+
+.drawer-list-item-icon {
+  color: white;
+}
+
+.drawer-list-item-text {
+  margin-left: 16px;
+}
+
+.drawer-spacer {
+  flex-grow: 1;
+}
+/* Adjust the font size for list item text */
+.MuiListItemText-primary {
+  font-size: 0.9rem;
+}
+
+/* Adjust the font size for section headings */
+.MuiTypography-h8 {
+  font-size: 0.8rem;
+}
+body {
+  font-size: 0.9rem;
+}

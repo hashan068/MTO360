@@ -1,0 +1,55 @@
+Username: hashan
+Email address: hashan@gmail.com
+Password:123456
+
+## To view a pretty Git branch graph, you can use various Git visualization tools and com
+git log --graph --oneline --decorate --all
+
+--graph: Draws a text-based graph of the commit history.
+--oneline: Condenses each commit to a single line.
+--decorate: Displays branch and tag names next to the corresponding commits.
+--all: Shows the entire commit history, including all branches.
+
+
+Summary of Commands
+
+Install psycopg2:
+pip install psycopg2-binary
+Update settings.py:
+
+python
+Copy code
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_database_name',
+        'USER': 'your_database_user',
+        'PASSWORD': 'your_database_password',
+        'HOST': 'your_database_host',
+        'PORT': 'your_database_port',
+    }
+}
+Create PostgreSQL database and user:
+
+CREATE DATABASE your_database_name;
+CREATE USER your_database_user WITH PASSWORD 'your_database_password';
+GRANT ALL PRIVILEGES ON DATABASE your_database_name TO your_database_user;
+
+Dump SQLite data:
+python manage.py dumpdata > db.json
+
+Migrate schema to PostgreSQL:
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc" -delete
+python manage.py makemigrations
+python manage.py migrate
+
+Load data into PostgreSQL:
+python manage.py loaddata db.json
+By following these steps, you should successfully migrate your Django project's database from SQLite to PostgreSQL.
+
+# DATABASE_NAME=keba-db-aws
+# DATABASE_USER=postgres
+# DATABASE_PASSWORD=ukcDySFrdGJsvkzEDa6A
+# DATABASE_HOST=keba-db-aws.che86eewsnny.us-east-1.rds.amazonaws.com
+# DATABASE_PORT=5432

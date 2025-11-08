@@ -1,0 +1,105 @@
+"""
+Authentication API endpoints
+"""
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+
+from app.config.database import get_db
+from app.models.user import User
+from app.middleware.auth import (
+    verify_password,
+    create_access_token,
+    create_refresh_token,
+    get_password_hash,
+)
+from app.config.settings import settings
+from pydantic import BaseModel
+from typing import Optional
+
+router = APIRouter(prefix="/api", tags=["Authentication"])
+
+
+class TokenResponse(BaseModel):
+    access: str
+    refresh: str
+    token_type: str = "bearer"
+    user: Optional[dict] = None
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+@router.post("/token", response_model=TokenResponse)
+async def login(
+    request: LoginRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Login endpoint - Get JWT tokens"""
+    result = await db.execute(select(User).where(User.username == request.username))
+    user = result.scalar_one_or_none()
+    
+    if not user or not verify_password(request.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User is inactive"
+        )
+    
+    # Create tokens
+    access_token = create_access_token(data={"sub": user.username})
+    refresh_token = create_refresh_token(data={"sub": user.username})
+    
+    return TokenResponse(
+        access=access_token,
+        refresh=refresh_token,
+        user={
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+        }
+    )
+
+
+@router.post("/token/refresh")
+async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
+    """Refresh access token"""
+    from jose import JWTError, jwt
+    
+    try:
+        payload = jwt.decode(refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        username: str = payload.get("sub")
+        token_type: str = payload.get("type")
+        
+        if username is None or token_type != "refresh":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid refresh token"
+            )
+    except JWTError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token"
+        )
+    
+    result = await db.execute(select(User).where(User.username == username))
+    user = result.scalar_one_or_none()
+    
+    if not user or not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User not found or inactive"
+        )
+    
+    access_token = create_access_token(data={"sub": user.username})
+    
+    return {"access": access_token, "token_type": "bearer"}
+

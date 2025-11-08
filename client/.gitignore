@@ -1,0 +1,125 @@
+node_modules/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.local
+.vscode/
+.idea/
+dist/
+.env
+.env.*
+# Documentation files (generated/auto-generated)
+# PROJECT_OVERVIEW.md
+# TECHNICAL_ARCHITECTURE.md
+# API_DOCUMENTATION.md
+# SETUP_DEPLOYMENT.md
+# TECHNOLOGY_STACK.md
+# AUTH_SETUP.md
+
+# Keep README files tracked
+!README.md
+!**/README.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.*
+*.env
+.python-version
+
+# Package/build artifacts
+build/
+dist/
+wheels/
+*.egg-info/
+.eggs/
+*.egg
+pip-wheel-metadata/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# Type checkers & linters
+.mypy_cache/
+.pytype/
+.pyre/
+.ruff_cache/
+.dmypy.json
+
+# Logs
+*.log
+logs/
+
+# IDE/editor
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Frontend build
+dist/
+dist-ssr/
+*.local
+
+# UV (Python package manager)
+.uv/
+# keep uv.lock tracked for reproducible builds
+
+# Local runtime artifacts
+instance/
+
+# SQLite and other local DBs
+*.sqlite3
+*.db
+*.sqlite
+
+# Database backups
+backup_*.sql
+*.dump
+*.backup
+
+# Cache
+.cache/
+
+# Uvicorn/Starlette static and temp files
+staticfiles/
+media/
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+*.bak
+*.swp
+*.swo
+
+# Personal development notes
+.notes/
