@@ -31,7 +31,10 @@ class QuotationRepository:
         """Get all quotations with pagination"""
         result = await self.db.execute(
             select(Quotation)
-            .options(selectinload(Quotation.customer))
+            .options(
+                selectinload(Quotation.customer),
+                selectinload(Quotation.quotation_items)
+            )
             .offset(skip)
             .limit(limit)
             .order_by(Quotation.created_at.desc())

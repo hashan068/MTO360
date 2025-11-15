@@ -128,10 +128,10 @@ const SalesOrdersPage = () => {
   };
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+          <Typography.Title level={3} style={{ margin: 0, marginBottom: '8px' }}>
             Sales Orders
           </Typography.Title>
           <Typography.Text type="secondary">Convert quotations into orders and track fulfillment.</Typography.Text>
@@ -139,7 +139,7 @@ const SalesOrdersPage = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setDrawerOpen(true)}>
           New Sales Order
         </Button>
-      </Space>
+      </div>
       <Card>
         <Table<SalesOrder>
           rowKey="id"
@@ -193,7 +193,7 @@ const SalesOrdersPage = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </Space>
+    </div>
   );
 };
 

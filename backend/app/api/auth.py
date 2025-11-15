@@ -69,6 +69,52 @@ async def login(
     )
 
 
+@router.post("/register")
+async def register(
+    request: LoginRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Register a new user (development only)"""
+    # Check if user already exists
+    result = await db.execute(select(User).where(User.username == request.username))
+    existing_user = result.scalar_one_or_none()
+    
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exists"
+        )
+    
+    # Create new user
+    password_hash = get_password_hash(request.password)
+    user = User(
+        username=request.username,
+        email=None,
+        password_hash=password_hash,
+        is_active=True,
+        is_superuser=False,
+        is_staff=False,
+    )
+    
+    db.add(user)
+    await db.commit()
+    await db.refresh(user)
+    
+    # Create tokens for immediate login
+    access_token = create_access_token(data={"sub": user.username})
+    refresh_token = create_refresh_token(data={"sub": user.username})
+    
+    return TokenResponse(
+        access=access_token,
+        refresh=refresh_token,
+        user={
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+        }
+    )
+
+
 @router.post("/token/refresh")
 async def refresh_token(refresh_token: str, db: AsyncSession = Depends(get_db)):
     """Refresh access token"""

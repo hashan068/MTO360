@@ -18,11 +18,13 @@ class MaterialRequisitionRepository:
     
     async def get_by_id(self, requisition_id: int) -> Optional[MaterialRequisition]:
         """Get material requisition by ID"""
+        from app.models.manufacturing import MaterialRequisitionItem
+        
         result = await self.db.execute(
             select(MaterialRequisition)
             .options(
                 selectinload(MaterialRequisition.manufacturing_order),
-                selectinload(MaterialRequisition.items)
+                selectinload(MaterialRequisition.items).selectinload(MaterialRequisitionItem.component)
             )
             .where(MaterialRequisition.id == requisition_id)
         )
@@ -30,9 +32,14 @@ class MaterialRequisitionRepository:
     
     async def get_all(self, skip: int = 0, limit: int = 100) -> List[MaterialRequisition]:
         """Get all material requisitions with pagination"""
+        from app.models.manufacturing import MaterialRequisitionItem
+        
         result = await self.db.execute(
             select(MaterialRequisition)
-            .options(selectinload(MaterialRequisition.manufacturing_order))
+            .options(
+                selectinload(MaterialRequisition.manufacturing_order),
+                selectinload(MaterialRequisition.items).selectinload(MaterialRequisitionItem.component)
+            )
             .offset(skip)
             .limit(limit)
             .order_by(MaterialRequisition.created_at.desc())

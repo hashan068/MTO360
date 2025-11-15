@@ -11,7 +11,7 @@ from app.middleware.auth import get_current_user_id
 from app.schemas.sales import SalesOrderCreate, SalesOrderResponse
 from app.modules.sales.application.services.sales_order_service import SalesOrderService
 
-router = APIRouter(prefix="/api/sales/sales-orders", tags=["Sales Orders"])
+router = APIRouter(prefix="/api/sales/orders", tags=["Sales Orders"])
 
 
 @router.get("/", response_model=List[SalesOrderResponse])

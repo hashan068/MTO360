@@ -44,7 +44,12 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ConfigProvider theme={themeConfig}>
         <AntdApp>
-          <BrowserRouter>
+          <BrowserRouter
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true,
+            }}
+          >
             <AppRoutes />
           </BrowserRouter>
         </AntdApp>

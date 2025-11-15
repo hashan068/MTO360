@@ -87,8 +87,15 @@ const DashboardPage = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <Typography.Title level={2}>Executive Dashboard</Typography.Title>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div>
+        <Typography.Title level={2} style={{ margin: 0, marginBottom: '8px' }}>
+          Executive Dashboard
+        </Typography.Title>
+        <Typography.Text type="secondary">
+          Overview of key metrics and recent activity
+        </Typography.Text>
+      </div>
       <Row gutter={[16, 16]}>
         <Col xs={24} md={12} lg={6}>
           <Card>

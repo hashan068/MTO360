@@ -6,7 +6,7 @@ from sqlalchemy import (
     Integer,
     Text,
     ForeignKey,
-    Decimal,
+    Numeric,
     Boolean,
     DateTime,
     Date,
@@ -85,15 +85,15 @@ class Product(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     model_number: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
-    price: Mapped[Decimal] = mapped_column(Decimal(10, 2), nullable=False)
+    price: Mapped[Numeric] = mapped_column(Numeric(10, 2), nullable=False)
     inverter_type: Mapped[InverterTypeEnum] = mapped_column(SQLEnum(InverterTypeEnum), nullable=False)
     power_rating: Mapped[int] = mapped_column(Integer, nullable=False)  # in watts
-    frequency: Mapped[Decimal] = mapped_column(Decimal(5, 2), nullable=False)
-    efficiency: Mapped[Decimal] = mapped_column(Decimal(5, 2), nullable=False)
+    frequency: Mapped[Numeric] = mapped_column(Numeric(5, 2), nullable=False)
+    efficiency: Mapped[Numeric] = mapped_column(Numeric(5, 2), nullable=False)
     surge_power: Mapped[int] = mapped_column(Integer, nullable=False)  # in watts
     warranty_years: Mapped[int] = mapped_column(Integer, nullable=False)
-    input_voltage: Mapped[Decimal] = mapped_column(Decimal(5, 2), nullable=False)
-    output_voltage: Mapped[Decimal] = mapped_column(Decimal(5, 2), nullable=False)
+    input_voltage: Mapped[Numeric] = mapped_column(Numeric(5, 2), nullable=False)
+    output_voltage: Mapped[Numeric] = mapped_column(Numeric(5, 2), nullable=False)
     
     # Relationships
     rfq_items: Mapped[list["RFQItem"]] = relationship("RFQItem", back_populates="product")
@@ -131,7 +131,7 @@ class RFQItem(Base):
     rfq_id: Mapped[int] = mapped_column(Integer, ForeignKey("rfqs.id"), nullable=False)
     product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
-    unit_price: Mapped[Decimal] = mapped_column(Decimal(10, 2), nullable=False)
+    unit_price: Mapped[Numeric] = mapped_column(Numeric(10, 2), nullable=False)
     
     # Relationships
     rfq: Mapped["RFQ"] = relationship("RFQ", back_populates="items")
@@ -150,7 +150,7 @@ class Quotation(Base, TimestampMixin):
     date: Mapped[date] = mapped_column(Date, nullable=False)
     expiration_date: Mapped[date] = mapped_column(Date, nullable=False)
     invoicing_and_shipping_address: Mapped[str] = mapped_column(Text, nullable=False)
-    total_amount: Mapped[Decimal] = mapped_column(Decimal(10, 2), default=0.0, nullable=False)
+    total_amount: Mapped[Numeric] = mapped_column(Numeric(10, 2), default=0.0, nullable=False)
     status: Mapped[QuotationStatusEnum] = mapped_column(SQLEnum(QuotationStatusEnum), default=QuotationStatusEnum.QUOTATION, nullable=False)
     created_by_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
     
@@ -170,7 +170,7 @@ class QuotationItem(Base):
     quotation_id: Mapped[int] = mapped_column(Integer, ForeignKey("quotations.id"), nullable=False)
     product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    unit_price: Mapped[Decimal] = mapped_column(Decimal(10, 2), nullable=False)
+    unit_price: Mapped[Numeric] = mapped_column(Numeric(10, 2), nullable=False)
     
     # Relationships
     quotation: Mapped["Quotation"] = relationship("Quotation", back_populates="quotation_items")
@@ -186,13 +186,12 @@ class SalesOrder(Base, TimestampMixin):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     customer_id: Mapped[int] = mapped_column(Integer, ForeignKey("customers.id"), nullable=False)
-    total_amount: Mapped[Decimal] = mapped_column(Decimal(10, 2), default=0.0, nullable=False)
+    total_amount: Mapped[Numeric] = mapped_column(Numeric(10, 2), default=0.0, nullable=False)
     status: Mapped[SalesOrderStatusEnum] = mapped_column(SQLEnum(SalesOrderStatusEnum), default=SalesOrderStatusEnum.PENDING, nullable=False)
     
     # Relationships
     customer: Mapped["Customer"] = relationship("Customer", back_populates="sales_orders")
     order_items: Mapped[list["SalesOrderItem"]] = relationship("SalesOrderItem", back_populates="order", cascade="all, delete-orphan")
-    manufacturing_orders: Mapped[list["ManufacturingOrder"]] = relationship("ManufacturingOrder", back_populates="sales_order_item")
     
     def __repr__(self):
         return f"<SalesOrder(id={self.id}, customer_id={self.customer_id}, status={self.status.value})>"
@@ -206,7 +205,7 @@ class SalesOrderItem(Base):
     order_id: Mapped[int] = mapped_column(Integer, ForeignKey("sales_orders.id"), nullable=False)
     product_id: Mapped[int] = mapped_column(Integer, ForeignKey("products.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    price: Mapped[Decimal] = mapped_column(Decimal(10, 2), nullable=False)
+    price: Mapped[Numeric] = mapped_column(Numeric(10, 2), nullable=False)
     
     # Relationships
     order: Mapped["SalesOrder"] = relationship("SalesOrder", back_populates="order_items")

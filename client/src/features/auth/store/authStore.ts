@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { AxiosError } from 'axios';
-import { AuthenticatedUser, login } from '@/features/auth/api';
+import { AuthenticatedUser, login, register } from '@/features/auth/api';
 import { clearAuthTokens, setAuthTokens } from '@/shared/api/client';
 import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_KEY } from '@/shared/constants/storage';
 import { getItem, removeItem, setItem } from '@/shared/utils/storage';
@@ -15,6 +15,7 @@ interface AuthState {
   error?: string | null;
   initialize: () => void;
   signIn: (username: string, password: string) => Promise<void>;
+  signUp: (username: string, password: string) => Promise<void>;
   signOut: () => void;
   setUser: (user: AuthenticatedUser | null) => void;
   setTokens: (access: string, refresh?: string) => void;
@@ -58,6 +59,34 @@ export const useAuthStore = create<AuthState>()(
           });
         } catch (error) {
           let message = 'Unable to sign in. Please try again.';
+          if (error instanceof AxiosError) {
+            message =
+              (error.response?.data as { detail?: string })?.detail ??
+              error.message ??
+              message;
+          } else if (error instanceof Error) {
+            message = error.message;
+          }
+          set({ isAuthenticating: false, error: message });
+          throw error;
+        }
+      },
+      signUp: async (username: string, password: string) => {
+        set({ isAuthenticating: true, error: null });
+        try {
+          const response = await register({ username, password });
+          setAuthTokens(response.access, response.refresh);
+          setItem(USER_KEY, JSON.stringify(response.user ?? null));
+          set({
+            accessToken: response.access,
+            refreshToken: response.refresh,
+            user: response.user ?? null,
+            isAuthenticating: false,
+            isInitialized: true,
+            error: null,
+          });
+        } catch (error) {
+          let message = 'Unable to create account. Please try again.';
           if (error instanceof AxiosError) {
             message =
               (error.response?.data as { detail?: string })?.detail ??

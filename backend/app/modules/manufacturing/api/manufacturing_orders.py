@@ -10,7 +10,7 @@ from app.middleware.auth import get_current_user_id
 from app.schemas.manufacturing import ManufacturingOrderCreate, ManufacturingOrderResponse
 from app.modules.manufacturing.application.services.manufacturing_service import ManufacturingService
 
-router = APIRouter(prefix="/api/manufacturing/manufacturing-orders", tags=["Manufacturing Orders"])
+router = APIRouter(prefix="/api/manufacturing/orders", tags=["Manufacturing Orders"])
 
 
 @router.get("/", response_model=List[ManufacturingOrderResponse])

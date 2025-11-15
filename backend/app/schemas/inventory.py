@@ -16,6 +16,7 @@ class ComponentBase(BaseModel):
     quantity: int = 0
     reorder_level: int = 0
     reorder_quantity: int = 0
+    order_quantity: int = 0
     unit_of_measure: str = "pcs"
     supplier_id: Optional[int] = None
     cost: Decimal = Decimal("0.0")
@@ -32,6 +33,7 @@ class ComponentUpdate(BaseModel):
     quantity: Optional[int] = None
     reorder_level: Optional[int] = None
     reorder_quantity: Optional[int] = None
+    order_quantity: Optional[int] = None
     unit_of_measure: Optional[str] = None
     supplier_id: Optional[int] = None
     cost: Optional[Decimal] = None

@@ -26,6 +26,7 @@ const SuppliersPage = () => {
   const { message } = AntdApp.useApp();
   const [drawerMode, setDrawerMode] = useState<Mode>('create');
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [form] = Form.useForm<SupplierFormValues>();
 
   const {
@@ -60,6 +61,7 @@ const SuppliersPage = () => {
     setDrawerMode('create');
     setEditingSupplier(null);
     form.resetFields();
+    setDrawerOpen(true);
   };
 
   const openEditDrawer = (supplier: Supplier) => {
@@ -73,6 +75,7 @@ const SuppliersPage = () => {
       is_active: supplier.is_active,
       notes: supplier.notes ?? '',
     });
+    setDrawerOpen(true);
   };
 
   const handleSubmit = (values: SupplierFormValues) => {
@@ -82,18 +85,19 @@ const SuppliersPage = () => {
         onSuccess: () => {
           form.resetFields();
           setEditingSupplier(null);
+          setDrawerOpen(false);
         },
       });
     } else if (editingSupplier) {
       updateMutation.mutate(payload, {
         onSuccess: () => {
           setEditingSupplier(null);
+          setDrawerOpen(false);
         },
       });
     }
   };
 
-  const isDrawerOpen = drawerMode === 'create' || editingSupplier !== null;
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const columns: ColumnsType<Supplier> = useMemo(
@@ -122,10 +126,10 @@ const SuppliersPage = () => {
   );
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+          <Typography.Title level={3} style={{ margin: 0, marginBottom: '8px' }}>
             Suppliers
           </Typography.Title>
           <Typography.Text type="secondary">
@@ -135,7 +139,7 @@ const SuppliersPage = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDrawer}>
           Add Supplier
         </Button>
-      </Space>
+      </div>
       <Card>
         <Table<Supplier>
           rowKey="id"
@@ -155,6 +159,7 @@ const SuppliersPage = () => {
           setEditingSupplier(null);
           setDrawerMode('create');
           form.resetFields();
+          setDrawerOpen(false);
         }}
       >
         <Form<SupplierFormValues> layout="vertical" form={form} onFinish={handleSubmit} initialValues={{ is_active: true }}>
@@ -188,7 +193,7 @@ const SuppliersPage = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </Space>
+    </div>
   );
 };
 

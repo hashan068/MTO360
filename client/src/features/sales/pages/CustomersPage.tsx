@@ -26,6 +26,7 @@ const CustomersPage = () => {
   const { message } = AntdApp.useApp();
   const [drawerMode, setDrawerMode] = useState<Mode>('create');
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [form] = Form.useForm<CustomerFormValues>();
 
   const {
@@ -60,6 +61,7 @@ const CustomersPage = () => {
     setDrawerMode('create');
     setEditingCustomer(null);
     form.resetFields();
+    setDrawerOpen(true);
   };
 
   const openEditDrawer = (customer: Customer) => {
@@ -74,6 +76,7 @@ const CustomersPage = () => {
       is_active: customer.is_active,
       notes: customer.notes ?? '',
     });
+    setDrawerOpen(true);
   };
 
   const handleSubmit = (values: CustomerFormValues) => {
@@ -83,16 +86,19 @@ const CustomersPage = () => {
         onSuccess: () => {
           form.resetFields();
           setEditingCustomer(null);
+          setDrawerOpen(false);
         },
       });
     } else if (editingCustomer) {
       updateMutation.mutate(payload, {
-        onSuccess: () => setEditingCustomer(null),
+        onSuccess: () => {
+          setEditingCustomer(null);
+          setDrawerOpen(false);
+        },
       });
     }
   };
 
-  const isDrawerOpen = drawerMode === 'create' || editingCustomer !== null;
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const columns: ColumnsType<Customer> = useMemo(
@@ -121,10 +127,10 @@ const CustomersPage = () => {
   );
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+          <Typography.Title level={3} style={{ margin: 0, marginBottom: '8px' }}>
             Customers
           </Typography.Title>
           <Typography.Text type="secondary">
@@ -134,7 +140,7 @@ const CustomersPage = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDrawer}>
           Add Customer
         </Button>
-      </Space>
+      </div>
       <Card>
         <Table<Customer>
           rowKey="id"
@@ -154,6 +160,7 @@ const CustomersPage = () => {
           setEditingCustomer(null);
           setDrawerMode('create');
           form.resetFields();
+          setDrawerOpen(false);
         }}
       >
         <Form<CustomerFormValues> layout="vertical" form={form} initialValues={{ is_active: true }} onFinish={handleSubmit}>
@@ -190,7 +197,7 @@ const CustomersPage = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </Space>
+    </div>
   );
 };
 

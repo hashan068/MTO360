@@ -51,24 +51,39 @@ const Header = () => {
   const initials = user?.username?.[0]?.toUpperCase() ?? 'U';
 
   return (
-    <Layout.Header className="flex items-center justify-between bg-white px-6 shadow-sm">
+    <Layout.Header
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        background: '#fff',
+        padding: '0 24px',
+        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+        height: '64px',
+        lineHeight: '64px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+      }}
+    >
       <Space size="large" align="center">
         <Button
           type="text"
           icon={isCollapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={toggleSidebar}
+          style={{ fontSize: '18px' }}
         />
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1.4' }}>
           <Typography.Text type="secondary" style={{ fontSize: 12 }}>
             MTO360
           </Typography.Text>
-          <Typography.Title level={4} style={{ margin: 0 }}>
+          <Typography.Title level={4} style={{ margin: 0, textTransform: 'capitalize' }}>
             {pageTitle}
           </Typography.Title>
         </div>
       </Space>
       <Space size="large" align="center">
-        <Space size="small">
+        <Space size="small" align="center">
           <SunOutlined style={{ color: theme === 'light' ? '#faad14' : undefined }} />
           <Switch
             checkedChildren={<MoonOutlined />}
@@ -79,11 +94,13 @@ const Header = () => {
           <MoonOutlined style={{ color: theme === 'dark' ? '#722ed1' : undefined }} />
         </Space>
         <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-          <Space align="center" className="cursor-pointer">
+          <Space align="center" style={{ cursor: 'pointer' }}>
             <Avatar style={{ backgroundColor: '#1677ff' }}>{initials}</Avatar>
-            <div>
-              <Typography.Text strong>{user?.username ?? 'User'}</Typography.Text>
-              <Typography.Text type="secondary" style={{ display: 'block', fontSize: 12 }}>
+            <div style={{ lineHeight: '1.4' }}>
+              <Typography.Text strong style={{ display: 'block' }}>
+                {user?.username ?? 'User'}
+              </Typography.Text>
+              <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                 {user?.email ?? 'user@example.com'}
               </Typography.Text>
             </div>

@@ -28,11 +28,6 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-class Base(DeclarativeBase):
-    """Base class for all database models"""
-    pass
-
-
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Dependency to get database session

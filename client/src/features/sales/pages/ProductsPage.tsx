@@ -37,6 +37,7 @@ const ProductsPage = () => {
   const { message } = AntdApp.useApp();
   const [drawerMode, setDrawerMode] = useState<Mode>('create');
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
   const [form] = Form.useForm<ProductFormValues>();
 
   const {
@@ -71,6 +72,7 @@ const ProductsPage = () => {
     setDrawerMode('create');
     setEditingProduct(null);
     form.resetFields();
+    setDrawerOpen(true);
   };
 
   const openEditDrawer = (product: Product) => {
@@ -88,6 +90,7 @@ const ProductsPage = () => {
       input_voltage: product.input_voltage,
       output_voltage: product.output_voltage,
     });
+    setDrawerOpen(true);
   };
 
   const handleSubmit = (values: ProductFormValues) => {
@@ -96,16 +99,19 @@ const ProductsPage = () => {
         onSuccess: () => {
           form.resetFields();
           setEditingProduct(null);
+          setDrawerOpen(false);
         },
       });
     } else if (editingProduct) {
       updateMutation.mutate(values, {
-        onSuccess: () => setEditingProduct(null),
+        onSuccess: () => {
+          setEditingProduct(null);
+          setDrawerOpen(false);
+        },
       });
     }
   };
 
-  const isDrawerOpen = drawerMode === 'create' || editingProduct !== null;
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   const columns: ColumnsType<Product> = useMemo(
@@ -129,10 +135,10 @@ const ProductsPage = () => {
   );
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+          <Typography.Title level={3} style={{ margin: 0, marginBottom: '8px' }}>
             Products
           </Typography.Title>
           <Typography.Text type="secondary">Manage product catalog and specifications.</Typography.Text>
@@ -140,7 +146,7 @@ const ProductsPage = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={openCreateDrawer}>
           Add Product
         </Button>
-      </Space>
+      </div>
       <Card>
         <Table<Product>
           rowKey="id"
@@ -160,6 +166,7 @@ const ProductsPage = () => {
           setEditingProduct(null);
           setDrawerMode('create');
           form.resetFields();
+          setDrawerOpen(false);
         }}
       >
         <Form<ProductFormValues> layout="vertical" form={form} onFinish={handleSubmit}>
@@ -174,18 +181,30 @@ const ProductsPage = () => {
           </Form.Item>
           <Space size="large" wrap>
             <Form.Item name="power_rating" label="Power Rating" rules={[{ required: true }]}> 
-              <InputNumber min={0} addonAfter="W" />
+              <Space.Compact>
+                <InputNumber min={0} style={{ width: '100%' }} />
+                <Input style={{ width: 50 }} defaultValue="W" disabled />
+              </Space.Compact>
             </Form.Item>
             <Form.Item name="surge_power" label="Surge Power" rules={[{ required: true }]}> 
-              <InputNumber min={0} addonAfter="W" />
+              <Space.Compact>
+                <InputNumber min={0} style={{ width: '100%' }} />
+                <Input style={{ width: 50 }} defaultValue="W" disabled />
+              </Space.Compact>
             </Form.Item>
             <Form.Item name="warranty_years" label="Warranty" rules={[{ required: true }]}> 
-              <InputNumber min={0} addonAfter="yrs" />
+              <Space.Compact>
+                <InputNumber min={0} style={{ width: '100%' }} />
+                <Input style={{ width: 50 }} defaultValue="yrs" disabled />
+              </Space.Compact>
             </Form.Item>
           </Space>
           <Space size="large" wrap>
             <Form.Item name="frequency" label="Frequency" rules={[{ required: true }]}> 
-              <Input placeholder="50" addonAfter="Hz" />
+              <Space.Compact>
+                <Input placeholder="50" />
+                <Input style={{ width: 50 }} defaultValue="Hz" disabled />
+              </Space.Compact>
             </Form.Item>
             <Form.Item name="efficiency" label="Efficiency" rules={[{ required: true }]}> 
               <Input placeholder="0.92" />
@@ -193,10 +212,16 @@ const ProductsPage = () => {
           </Space>
           <Space size="large" wrap>
             <Form.Item name="input_voltage" label="Input Voltage" rules={[{ required: true }]}> 
-              <Input placeholder="220" addonAfter="V" />
+              <Space.Compact>
+                <Input placeholder="220" />
+                <Input style={{ width: 50 }} defaultValue="V" disabled />
+              </Space.Compact>
             </Form.Item>
             <Form.Item name="output_voltage" label="Output Voltage" rules={[{ required: true }]}> 
-              <Input placeholder="240" addonAfter="V" />
+              <Space.Compact>
+                <Input placeholder="240" />
+                <Input style={{ width: 50 }} defaultValue="V" disabled />
+              </Space.Compact>
             </Form.Item>
           </Space>
           <Form.Item>
@@ -211,7 +236,7 @@ const ProductsPage = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </Space>
+    </div>
   );
 };
 

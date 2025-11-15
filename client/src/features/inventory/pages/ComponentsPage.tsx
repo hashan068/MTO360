@@ -108,10 +108,10 @@ const ComponentsPage = () => {
   ];
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+          <Typography.Title level={3} style={{ margin: 0, marginBottom: '8px' }}>
             Components
           </Typography.Title>
           <Typography.Text type="secondary">
@@ -131,7 +131,7 @@ const ComponentsPage = () => {
             New Component
           </Button>
         </Space>
-      </Space>
+      </div>
       <Card>
         <Table<Component>
           rowKey="id"
@@ -178,7 +178,7 @@ const ComponentsPage = () => {
           </Space>
         )}
       </Drawer>
-    </Space>
+    </div>
   );
 };
 

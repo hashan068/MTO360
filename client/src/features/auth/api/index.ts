@@ -28,6 +28,12 @@ export function logout(): void {
   clearAuthTokens();
 }
 
+export async function register(payload: LoginPayload): Promise<LoginResponse> {
+  const { data } = await api.post<LoginResponse>('/api/register', payload);
+  setAuthTokens(data.access, data.refresh);
+  return data;
+}
+
 export async function fetchCurrentUser(): Promise<AuthenticatedUser> {
   const { data } = await api.get<AuthenticatedUser>('/api/users/me');
   return data;

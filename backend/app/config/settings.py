@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     """Application settings"""
     
     # Database
-    DATABASE_URL: str = "postgresql+asyncpg://user:password@localhost:5432/mto360"
+    DATABASE_URL: str = "postgresql+asyncpg://mto360_user:mto360_secure_pass_2024@localhost:28472/mto360_production"
     DATABASE_NAME: Optional[str] = None
     DATABASE_USER: Optional[str] = None
     DATABASE_PASSWORD: Optional[str] = None
@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
-    # CORS
-    CORS_ORIGINS: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    # CORS - can be a comma-separated string or list
+    CORS_ORIGINS: str | list[str] = ["http://localhost:3000", "http://localhost:5173"]
     
     # Mailgun (for email notifications)
     MAILGUN_API_KEY: Optional[str] = None

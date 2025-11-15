@@ -65,10 +65,10 @@ const RfqsPage = () => {
   };
 
   return (
-    <Space direction="vertical" size="large" style={{ width: '100%' }}>
-      <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <Typography.Title level={3} style={{ margin: 0 }}>
+          <Typography.Title level={3} style={{ margin: 0, marginBottom: '8px' }}>
             RFQs
           </Typography.Title>
           <Typography.Text type="secondary">
@@ -78,7 +78,7 @@ const RfqsPage = () => {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setDrawerOpen(true)}>
           New RFQ
         </Button>
-      </Space>
+      </div>
       <Card>
         <Table<RFQ> rowKey="id" columns={columns} dataSource={rfqs} loading={isLoading} pagination={{ pageSize: 10 }} />
       </Card>
@@ -118,7 +118,7 @@ const RfqsPage = () => {
           </Form.Item>
         </Form>
       </Drawer>
-    </Space>
+    </div>
   );
 };
 

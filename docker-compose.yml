@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database for MTO360
+  postgres:
+    image: postgres:13-alpine
+    container_name: mto360_postgres_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mto360_user
+      POSTGRES_PASSWORD: mto360_secure_pass_2024
+      POSTGRES_DB: mto360_production
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "28472:5432"
+    volumes:
+      - mto360_postgres_storage:/var/lib/postgresql/data
+      - ./backend/init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mto360_user -d mto360_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mto360_internal_net
+
+  # Redis for caching and session management (optional but useful)
+  redis:
+    image: redis:7-alpine
+    container_name: mto360_redis_cache
+    restart: unless-stopped
+    ports:
+      - "29384:6379"
+    volumes:
+      - mto360_redis_storage:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mto360_internal_net
+
+volumes:
+  mto360_postgres_storage:
+    driver: local
+  mto360_redis_storage:
+    driver: local
+
+networks:
+  mto360_internal_net:
+    driver: bridge
+    name: mto360_internal_net
+

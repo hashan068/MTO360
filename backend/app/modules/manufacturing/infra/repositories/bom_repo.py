@@ -18,18 +18,28 @@ class BillOfMaterialRepository:
     
     async def get_by_id(self, bom_id: int) -> Optional[BillOfMaterial]:
         """Get BOM by ID"""
+        from app.models.manufacturing import BOMItem
+        
         result = await self.db.execute(
             select(BillOfMaterial)
-            .options(selectinload(BillOfMaterial.bom_items))
+            .options(
+                selectinload(BillOfMaterial.product),
+                selectinload(BillOfMaterial.bom_items).selectinload(BOMItem.component)
+            )
             .where(BillOfMaterial.id == bom_id)
         )
         return result.scalar_one_or_none()
     
     async def get_all(self, skip: int = 0, limit: int = 100) -> List[BillOfMaterial]:
         """Get all BOMs with pagination"""
+        from app.models.manufacturing import BOMItem
+        
         result = await self.db.execute(
             select(BillOfMaterial)
-            .options(selectinload(BillOfMaterial.bom_items))
+            .options(
+                selectinload(BillOfMaterial.product),
+                selectinload(BillOfMaterial.bom_items).selectinload(BOMItem.component)
+            )
             .offset(skip)
             .limit(limit)
             .order_by(BillOfMaterial.created_at.desc())
@@ -38,9 +48,14 @@ class BillOfMaterialRepository:
     
     async def get_by_product_id(self, product_id: int) -> Optional[BillOfMaterial]:
         """Get BOM by product ID"""
+        from app.models.manufacturing import BOMItem
+        
         result = await self.db.execute(
             select(BillOfMaterial)
-            .options(selectinload(BillOfMaterial.bom_items))
+            .options(
+                selectinload(BillOfMaterial.product),
+                selectinload(BillOfMaterial.bom_items).selectinload(BOMItem.component)
+            )
             .where(BillOfMaterial.product_id == product_id)
         )
         return result.scalar_one_or_none()

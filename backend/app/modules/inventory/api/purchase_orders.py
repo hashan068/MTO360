@@ -25,7 +25,33 @@ async def get_purchase_orders(
     """Get all purchase orders"""
     service = PurchaseService(db)
     orders = await service.get_purchase_orders(skip=skip, limit=limit)
-    return orders
+    # Convert purchase_requisition relationship to dict for each order
+    response_data = []
+    for order in orders:
+        # Create response excluding purchase_requisition relationship
+        order_dict = {
+            "id": order.id,
+            "creator_id": order.creator_id,
+            "purchase_requisition_id": order.purchase_requisition_id,
+            "supplier_id": order.supplier_id,
+            "status": order.status,
+            "notes": order.notes,
+            "price_per_unit": order.price_per_unit,
+            "total_price": order.total_price,
+            "created_at": order.created_at,
+            "updated_at": order.updated_at,
+            "purchase_requisition": None,
+        }
+        order_response = PurchaseOrderResponse.model_validate(order_dict)
+        if order.purchase_requisition:
+            order_response.purchase_requisition = {
+                "id": order.purchase_requisition.id,
+                "component_id": order.purchase_requisition.component_id,
+                "quantity": order.purchase_requisition.quantity,
+                "status": order.purchase_requisition.status.value,
+            }
+        response_data.append(order_response)
+    return response_data
 
 
 @router.get("/{order_id}", response_model=PurchaseOrderResponse)

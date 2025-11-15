@@ -20,9 +20,14 @@ class SalesOrderRepository:
     
     async def get_by_id(self, order_id: int) -> Optional[SalesOrder]:
         """Get sales order by ID"""
+        from app.models.sales import SalesOrderItem
+        
         result = await self.db.execute(
             select(SalesOrder)
-            .options(selectinload(SalesOrder.customer), selectinload(SalesOrder.order_items))
+            .options(
+                selectinload(SalesOrder.customer),
+                selectinload(SalesOrder.order_items).selectinload(SalesOrderItem.product)
+            )
             .where(SalesOrder.id == order_id)
         )
         return result.scalar_one_or_none()
@@ -30,7 +35,12 @@ class SalesOrderRepository:
     async def get_all(self, skip: int = 0, limit: int = 100,
                      start_date: Optional[date] = None, end_date: Optional[date] = None) -> List[SalesOrder]:
         """Get all sales orders with pagination and optional date filtering"""
-        query = select(SalesOrder).options(selectinload(SalesOrder.customer))
+        from app.models.sales import SalesOrderItem, Product
+        
+        query = select(SalesOrder).options(
+            selectinload(SalesOrder.customer),
+            selectinload(SalesOrder.order_items).selectinload(SalesOrderItem.product)
+        )
         
         if start_date and end_date:
             query = query.where(

@@ -6,7 +6,7 @@ from sqlalchemy import (
     Integer,
     Text,
     ForeignKey,
-    Decimal,
+    Numeric,
     Boolean,
     DateTime,
     Enum as SQLEnum,
@@ -97,7 +97,7 @@ class Component(Base, TimestampMixin):
     order_quantity: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     unit_of_measure: Mapped[str] = mapped_column(String(20), default="pcs", nullable=False)
     supplier_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("suppliers.id"), nullable=True)
-    cost: Mapped[Decimal] = mapped_column(Decimal(10, 2), default=0.0, nullable=False)
+    cost: Mapped[Numeric] = mapped_column(Numeric(10, 2), default=0.0, nullable=False)
     
     # Relationships
     category: Mapped[Optional["Category"]] = relationship("Category", back_populates="components")
@@ -144,8 +144,8 @@ class PurchaseOrder(Base, TimestampMixin):
     supplier_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("suppliers.id"), nullable=True)
     status: Mapped[PurchaseOrderStatusEnum] = mapped_column(SQLEnum(PurchaseOrderStatusEnum), default=PurchaseOrderStatusEnum.DRAFT, nullable=False)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    price_per_unit: Mapped[Optional[Decimal]] = mapped_column(Decimal(10, 2), nullable=True)
-    total_price: Mapped[Optional[Decimal]] = mapped_column(Decimal(10, 2), nullable=True)
+    price_per_unit: Mapped[Optional[Numeric]] = mapped_column(Numeric(10, 2), nullable=True)
+    total_price: Mapped[Optional[Numeric]] = mapped_column(Numeric(10, 2), nullable=True)
     
     # Relationships
     purchase_requisition: Mapped["PurchaseRequisition"] = relationship("PurchaseRequisition", back_populates="purchase_orders")

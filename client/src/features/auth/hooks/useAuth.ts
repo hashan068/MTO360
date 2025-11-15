@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 export const useAuth = () => {
@@ -10,6 +10,7 @@ export const useAuth = () => {
     error,
     initialize,
     signIn,
+    signUp,
     signOut,
   } = useAuthStore((state) => ({
     accessToken: state.accessToken,
@@ -19,6 +20,7 @@ export const useAuth = () => {
     error: state.error,
     initialize: state.initialize,
     signIn: state.signIn,
+    signUp: state.signUp,
     signOut: state.signOut,
   }));
 
@@ -28,6 +30,10 @@ export const useAuth = () => {
     }
   }, [initialize, isInitialized]);
 
+  const resetError = useCallback(() => {
+    useAuthStore.setState({ error: null });
+  }, []);
+
   return {
     accessToken,
     user,
@@ -36,7 +42,8 @@ export const useAuth = () => {
     isAuthenticated: Boolean(accessToken),
     error,
     signIn,
+    signUp,
     signOut,
-    resetError: () => useAuthStore.setState({ error: null }),
+    resetError,
   };
 };

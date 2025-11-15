@@ -11,7 +11,7 @@ const menuItems: MenuProps['items'] = [
     label: 'Dashboard',
   },
   {
-    key: '/inventory',
+    key: 'inventory-menu',
     icon: <DatabaseOutlined />,
     label: 'Inventory',
     children: [
@@ -24,7 +24,7 @@ const menuItems: MenuProps['items'] = [
     ],
   },
   {
-    key: '/sales',
+    key: 'sales-menu',
     icon: <ShoppingCartOutlined />,
     label: 'Sales',
     children: [
@@ -37,7 +37,7 @@ const menuItems: MenuProps['items'] = [
     ],
   },
   {
-    key: '/manufacturing',
+    key: 'manufacturing-menu',
     icon: <ToolOutlined />,
     label: 'Manufacturing',
     children: [
@@ -50,9 +50,9 @@ const menuItems: MenuProps['items'] = [
 ];
 
 const findOpenKey = (path: string): string | undefined => {
-  if (path.startsWith('/inventory')) return '/inventory';
-  if (path.startsWith('/sales')) return '/sales';
-  if (path.startsWith('/manufacturing')) return '/manufacturing';
+  if (path.startsWith('/inventory')) return 'inventory-menu';
+  if (path.startsWith('/sales')) return 'sales-menu';
+  if (path.startsWith('/manufacturing')) return 'manufacturing-menu';
   if (path.startsWith('/dashboard')) return '/dashboard';
   return undefined;
 };
@@ -80,12 +80,12 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-4 py-6">
-        <Typography.Title level={4} style={{ color: 'white', margin: 0 }}>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '24px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <Typography.Title level={4} style={{ color: 'white', margin: 0, fontSize: '20px' }}>
           MTO360
         </Typography.Title>
-        <Typography.Text style={{ color: 'rgba(255, 255, 255, 0.65)' }}>
+        <Typography.Text style={{ color: 'rgba(255, 255, 255, 0.65)', fontSize: '12px' }}>
           Operations Suite
         </Typography.Text>
       </div>
@@ -98,6 +98,7 @@ const Sidebar = () => {
         items={menuItems}
         selectedKeys={selectedKeys}
         defaultOpenKeys={openKeys}
+        style={{ flex: 1, borderRight: 0 }}
       />
     </div>
   );

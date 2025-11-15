@@ -5,9 +5,9 @@ interface FullScreenLoaderProps {
 }
 
 const FullScreenLoader = ({ message = 'Loading application...' }: FullScreenLoaderProps) => (
-  <Flex align="center" justify="center" style={{ minHeight: '100vh' }}>
-    <Spin size="large" tip={message} />
-  </Flex>
+  <Spin size="large" tip={message} style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '100vh' }} />
+  </Spin>
 );
 
 export default FullScreenLoader;
