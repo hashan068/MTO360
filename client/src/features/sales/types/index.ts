@@ -54,7 +54,8 @@ export type ProductUpdatePayload = Partial<ProductCreatePayload> & {
   description?: string;
 };
 
-export type RFQStatus = 'DRAFT' | 'OPEN' | 'REVIEW' | 'APPROVED' | 'REJECTED' | 'CLOSED';
+// RFQ Status Enum - aligned with backend RFQStatusEnum
+export type RFQStatus = 'draft' | 'sent' | 'cancelled' | 'completed';
 
 export interface RFQItem {
   id: number;
@@ -63,12 +64,22 @@ export interface RFQItem {
   unit_price: string;
 }
 
+export interface RFQSummary {
+  id: number;
+  creator_id: number;
+  status: RFQStatus;
+  due_date?: string | null;
+  created_at: string;
+}
+
 export interface RFQ extends BaseEntity {
   creator_id: number;
+  creator_name?: string | null;
   status: RFQStatus;
   due_date?: string | null;
   description?: string | null;
   items: RFQItem[];
+  quotations?: QuotationSummary[];
 }
 
 export interface RFQItemCreatePayload {
@@ -86,13 +97,21 @@ export interface RFQCreatePayload {
 
 export type RFQUpdatePayload = Partial<RFQCreatePayload>;
 
+export interface ConvertRFQToQuotationRequest {
+  customer_id: number;
+  date: string;
+  expiration_date: string;
+  invoicing_and_shipping_address: string;
+}
+
+// Quotation Status Enum - aligned with backend QuotationStatusEnum
 export type QuotationStatus =
-  | 'QUOTATION'
-  | 'NEGOTIATION'
-  | 'APPROVED'
-  | 'REJECTED'
-  | 'EXPIRED'
-  | 'CONVERTED';
+  | 'quotation'
+  | 'quotation_sent'
+  | 'accepted'
+  | 'rejected'
+  | 'cancelled'
+  | 'expired';
 
 export interface QuotationItem {
   id: number;
@@ -101,16 +120,41 @@ export interface QuotationItem {
   unit_price: string;
 }
 
+export interface QuotationSummary {
+  id: number;
+  customer_id: number;
+  customer_name?: string | null;
+  date: string;
+  total_amount: string;
+  status: QuotationStatus;
+}
+
+export interface EmailHistoryEntry {
+  sent_at: string;
+  sent_by_user_id: number;
+  sent_by_username: string;
+  recipient: string;
+  count: number;
+}
+
 export interface Quotation extends BaseEntity {
   customer_id: number;
   customer_name?: string | null;
+  rfq_id?: number | null;
+  rfq_reference?: RFQSummary | null;
   date: string;
   expiration_date: string;
   invoicing_and_shipping_address: string;
   total_amount: string;
   status: QuotationStatus;
+  is_expired: boolean;
+  can_edit: boolean;
   created_by_id: number;
+  email_sent_at?: string | null;
+  email_sent_count: number;
+  email_history?: EmailHistoryEntry[] | null;
   quotation_items: QuotationItem[];
+  sales_orders?: SalesOrderSummary[];
 }
 
 export interface QuotationItemCreatePayload {
@@ -130,21 +174,48 @@ export interface QuotationCreatePayload {
 
 export type QuotationUpdatePayload = Partial<QuotationCreatePayload>;
 
-export type SalesOrderStatus = 'PENDING' | 'PROCESSING' | 'FULFILLED' | 'CANCELLED';
+export interface QuotationStatusUpdatePayload {
+  status: QuotationStatus;
+}
+
+// Sales Order Status Enum - aligned with backend SalesOrderStatusEnum
+export type SalesOrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'processing'
+  | 'in_production'
+  | 'ready_for_delivery'
+  | 'cancelled'
+  | 'delivered';
 
 export interface SalesOrderItem {
   id: number;
+  sales_order_item_id?: number | null;
   product_id: number;
   product_name?: string | null;
   quantity: number;
   price: string;
 }
 
-export interface SalesOrder extends BaseEntity {
+export interface SalesOrderSummary {
+  id: number;
   customer_id: number;
   customer_name?: string | null;
   total_amount: string;
   status: SalesOrderStatus;
+  created_at: string;
+}
+
+export interface SalesOrder extends BaseEntity {
+  customer_id: number;
+  customer_name?: string | null;
+  quotation_id?: number | null;
+  quotation_reference?: QuotationSummary | null;
+  rfq_reference?: RFQSummary | null;
+  total_amount: string;
+  status: SalesOrderStatus;
+  can_edit: boolean;
+  delivery_date?: string | null;
   created_at_date?: string | null;
   order_items: SalesOrderItem[];
 }
@@ -163,3 +234,8 @@ export interface SalesOrderCreatePayload {
 export type SalesOrderUpdatePayload = Partial<SalesOrderCreatePayload> & {
   status?: SalesOrderStatus;
 };
+
+export interface SalesOrderStatusUpdatePayload {
+  status: SalesOrderStatus;
+  notes?: string | null;
+}

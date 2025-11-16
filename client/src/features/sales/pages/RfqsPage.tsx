@@ -1,67 +1,95 @@
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {
-  App as AntdApp,
   Button,
   Card,
-  Drawer,
-  Form,
   Input,
   Select,
   Space,
   Table,
-  Tag,
   Typography,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { rfqsApi } from '@/features/sales/api';
-import type { RFQ, RFQCreatePayload } from '@/features/sales/types';
-
-const statusColor: Record<RFQ['status'], string> = {
-  DRAFT: 'default',
-  OPEN: 'blue',
-  REVIEW: 'purple',
-  APPROVED: 'green',
-  REJECTED: 'red',
-  CLOSED: 'default',
-};
+import type { RFQ, RFQStatus } from '@/features/sales/types';
+import { StatusBadge } from '@/features/sales/components/StatusBadge';
+import { formatDate } from '@/shared/utils/format';
 
 const RfqsPage = () => {
-  const { message } = AntdApp.useApp();
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [form] = Form.useForm<RFQCreatePayload>();
+  const navigate = useNavigate();
+  const [statusFilter, setStatusFilter] = useState<RFQStatus | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string>('');
 
   const {
     data: rfqs = [],
     isLoading,
-    refetch,
   } = useQuery<RFQ[]>({
-    queryKey: ['sales', 'rfqs', 'list'],
-    queryFn: () => rfqsApi.list({ limit: 200 }),
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (values: RFQCreatePayload) => rfqsApi.create(values),
-    onSuccess: () => {
-      message.success('RFQ created');
-      setDrawerOpen(false);
-      form.resetFields();
-      refetch();
-    },
-    onError: () => message.error('Unable to create RFQ'),
+    queryKey: ['sales', 'rfqs', 'list', statusFilter, searchText],
+    queryFn: () => rfqsApi.list({ 
+      status: statusFilter, 
+      search: searchText || undefined,
+      limit: 200 
+    }),
   });
 
   const columns: ColumnsType<RFQ> = [
-    { title: 'RFQ #', dataIndex: 'id', key: 'id', width: 80 },
-    { title: 'Status', dataIndex: 'status', key: 'status', render: (value: RFQ['status']) => <Tag color={statusColor[value]}>{value}</Tag> },
-    { title: 'Due Date', dataIndex: 'due_date', key: 'due_date' },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-    { title: 'Created', dataIndex: 'created_at', key: 'created_at' },
+    { 
+      title: 'RFQ #', 
+      dataIndex: 'id', 
+      key: 'id', 
+      width: 100,
+      sorter: (a, b) => a.id - b.id,
+    },
+    { 
+      title: 'Creator', 
+      dataIndex: 'creator_name', 
+      key: 'creator_name',
+      render: (name: string | null, record: RFQ) => name || `User #${record.creator_id}`,
+    },
+    { 
+      title: 'Status', 
+      dataIndex: 'status', 
+      key: 'status',
+      width: 140,
+      render: (status: RFQStatus) => <StatusBadge status={status} />,
+    },
+    { 
+      title: 'Due Date', 
+      dataIndex: 'due_date', 
+      key: 'due_date',
+      width: 140,
+      render: (date: string | null) => date ? formatDate(date) : '—',
+      sorter: (a, b) => {
+        if (!a.due_date) return 1;
+        if (!b.due_date) return -1;
+        return new Date(a.due_date).getTime() - new Date(b.due_date).getTime();
+      },
+    },
+    { 
+      title: 'Created Date', 
+      dataIndex: 'created_at', 
+      key: 'created_at',
+      width: 140,
+      render: (date: string) => formatDate(date),
+      sorter: (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+    },
+    { 
+      title: 'Description', 
+      dataIndex: 'description', 
+      key: 'description',
+      ellipsis: true,
+      render: (text: string | null) => text || '—',
+    },
   ];
 
-  const handleCreate = (values: RFQCreatePayload) => {
-    createMutation.mutate({ ...values, items: values.items ?? [] });
+  const handleRowClick = (record: RFQ) => {
+    navigate(`/sales/rfqs/${record.id}`);
+  };
+
+  const handleCreateRFQ = () => {
+    navigate('/sales/rfqs/new');
   };
 
   return (
@@ -75,49 +103,50 @@ const RfqsPage = () => {
             Track requests for quotes throughout the sales pipeline.
           </Typography.Text>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setDrawerOpen(true)}>
-          New RFQ
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreateRFQ}>
+          Create RFQ
         </Button>
       </div>
-      <Card>
-        <Table<RFQ> rowKey="id" columns={columns} dataSource={rfqs} loading={isLoading} pagination={{ pageSize: 10 }} />
-      </Card>
 
-      <Drawer
-        width={480}
-        title="Create RFQ"
-        destroyOnClose
-        onClose={() => setDrawerOpen(false)}
-        open={isDrawerOpen}
-      >
-        <Form<RFQCreatePayload> layout="vertical" form={form} onFinish={handleCreate} initialValues={{ status: 'DRAFT' }}>
-          <Form.Item name="status" label="Status">
+      <Card>
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          <Space size="middle" style={{ width: '100%' }}>
             <Select
+              placeholder="Filter by status"
+              allowClear
+              style={{ width: 200 }}
+              value={statusFilter}
+              onChange={setStatusFilter}
               options={[
-                { label: 'Draft', value: 'DRAFT' },
-                { label: 'Open', value: 'OPEN' },
-                { label: 'Review', value: 'REVIEW' },
+                { label: 'Draft', value: 'draft' },
+                { label: 'Sent', value: 'sent' },
+                { label: 'Completed', value: 'completed' },
+                { label: 'Cancelled', value: 'cancelled' },
               ]}
             />
-          </Form.Item>
-          <Form.Item name="due_date" label="Due Date">
-            <Input placeholder="YYYY-MM-DD" />
-          </Form.Item>
-          <Form.Item name="description" label="Description">
-            <Input.TextArea rows={4} placeholder="Describe the request" />
-          </Form.Item>
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={createMutation.isPending}>
-                Create
-              </Button>
-              <Button htmlType="button" onClick={() => form.resetFields()}>
-                Reset
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Drawer>
+            <Input
+              placeholder="Search RFQ number, description..."
+              prefix={<SearchOutlined />}
+              allowClear
+              style={{ width: 300 }}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </Space>
+
+          <Table<RFQ> 
+            rowKey="id" 
+            columns={columns} 
+            dataSource={rfqs} 
+            loading={isLoading} 
+            pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `Total ${total} RFQs` }}
+            onRow={(record) => ({
+              onClick: () => handleRowClick(record),
+              style: { cursor: 'pointer' },
+            })}
+          />
+        </Space>
+      </Card>
     </div>
   );
 };

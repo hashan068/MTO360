@@ -1,135 +1,136 @@
-import { MailOutlined, PlusOutlined } from '@ant-design/icons';
+import { MailOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {
   App as AntdApp,
   Button,
   Card,
-  DatePicker,
-  Drawer,
-  Form,
   Input,
-  InputNumber,
   Select,
   Space,
   Table,
-  Tag,
   Typography,
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import dayjs, { Dayjs } from 'dayjs';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import dayjs from 'dayjs';
 import { useState } from 'react';
-import { customersApi, productsApi, quotationsApi, sendQuotationEmail } from '@/features/sales/api';
+import { useNavigate } from 'react-router-dom';
+import { quotationsApi, sendQuotationEmail } from '@/features/sales/api';
 import type {
-  Customer,
-  Product,
   Quotation,
-  QuotationCreatePayload,
-  QuotationItemCreatePayload,
+  QuotationStatus,
 } from '@/features/sales/types';
 import { formatCurrency } from '@/shared/utils/format';
-
-const statusColor: Record<Quotation['status'], string> = {
-  QUOTATION: 'blue',
-  NEGOTIATION: 'purple',
-  APPROVED: 'green',
-  REJECTED: 'red',
-  EXPIRED: 'default',
-  CONVERTED: 'success',
-};
-
-interface QuotationFormValues
-  extends Omit<QuotationCreatePayload, 'date' | 'expiration_date' | 'quotation_items'> {
-  date: Dayjs;
-  expiration_date: Dayjs;
-  quotation_items?: QuotationItemCreatePayload[];
-}
-
-const QuotationItemFields = ({ name, remove, products }: { name: number; remove: (index: number | number[]) => void; products: Product[] }) => (
-  <Space align="baseline" wrap style={{ width: '100%' }}>
-    <Form.Item
-      name={[name, 'product_id']}
-      label="Product"
-      rules={[{ required: true, message: 'Select product' }]}
-    >
-      <Select
-        showSearch
-        placeholder="Product"
-        optionFilterProp="label"
-        options={products.map((product) => ({
-          label: product.product_name ?? product.description,
-          value: product.id,
-        }))}
-        style={{ minWidth: 200 }}
-      />
-    </Form.Item>
-    <Form.Item
-      name={[name, 'quantity']}
-      label="Qty"
-      rules={[{ required: true, message: 'Enter quantity' }]}
-    >
-      <InputNumber min={1} />
-    </Form.Item>
-    <Form.Item
-      name={[name, 'unit_price']}
-      label="Unit Price"
-      rules={[{ required: true, message: 'Enter price' }]}
-    >
-      <InputNumber min={0} step={0.01} />
-    </Form.Item>
-    <Button type="link" danger onClick={() => remove(name)}>
-      Remove
-    </Button>
-  </Space>
-);
+import { StatusBadge } from '@/features/sales/components/StatusBadge';
 
 const QuotationsPage = () => {
   const { message } = AntdApp.useApp();
-  const [isDrawerOpen, setDrawerOpen] = useState(false);
-  const [form] = Form.useForm<QuotationFormValues>();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [statusFilter, setStatusFilter] = useState<QuotationStatus | undefined>(undefined);
+  const [searchText, setSearchText] = useState<string>('');
 
-  const { data: quotations = [], isLoading, refetch } = useQuery<Quotation[]>({
-    queryKey: ['sales', 'quotations', 'list'],
-    queryFn: () => quotationsApi.list({ limit: 200 }),
+  const { data: quotations = [], isLoading } = useQuery<Quotation[]>({
+    queryKey: ['sales', 'quotations', 'list', statusFilter, searchText],
+    queryFn: () => quotationsApi.list({ 
+      status: statusFilter, 
+      search: searchText || undefined,
+      limit: 200 
+    }),
   });
 
-  const { data: customers = [] } = useQuery<Customer[]>({
-    queryKey: ['sales', 'customers', 'options'],
-    queryFn: () => customersApi.list({ limit: 200 }),
-  });
 
-  const { data: products = [] } = useQuery<Product[]>({
-    queryKey: ['sales', 'products', 'options'],
-    queryFn: () => productsApi.list({ limit: 200 }),
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (values: QuotationCreatePayload) => quotationsApi.create(values),
-    onSuccess: () => {
-      message.success('Quotation created');
-      setDrawerOpen(false);
-      form.resetFields();
-      refetch();
-    },
-    onError: () => message.error('Unable to create quotation'),
-  });
 
   const emailMutation = useMutation({
     mutationFn: (id: number) => sendQuotationEmail(id),
-    onSuccess: () => message.success('Quotation email sent'),
+    onSuccess: () => {
+      message.success('Quotation email sent successfully');
+      // Invalidate queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['sales', 'quotations'] });
+    },
     onError: () => message.error('Unable to send quotation email'),
   });
 
+  // Check if quotation is expired
+  const isQuotationExpired = (quotation: Quotation): boolean => {
+    const today = dayjs().startOf('day');
+    const expirationDate = dayjs(quotation.expiration_date).startOf('day');
+    return expirationDate.isBefore(today) && 
+           (quotation.status === 'quotation' || quotation.status === 'quotation_sent');
+  };
+
   const columns: ColumnsType<Quotation> = [
-    { title: 'Quotation', dataIndex: 'id', key: 'id', width: 100 },
-    { title: 'Customer', dataIndex: 'customer_name', key: 'customer_name' },
-    { title: 'Total', dataIndex: 'total_amount', key: 'total_amount', render: (value) => formatCurrency(value) },
+    { 
+      title: 'ID', 
+      dataIndex: 'id', 
+      key: 'id', 
+      width: 80,
+      render: (id: number) => `#${id}`,
+    },
+    { 
+      title: 'Customer', 
+      dataIndex: 'customer_name', 
+      key: 'customer_name',
+      ellipsis: true,
+    },
+    { 
+      title: 'Date', 
+      dataIndex: 'date', 
+      key: 'date',
+      width: 120,
+    },
+    { 
+      title: 'Expiration', 
+      dataIndex: 'expiration_date', 
+      key: 'expiration_date',
+      width: 120,
+      render: (date: string, record: Quotation) => {
+        const expired = isQuotationExpired(record);
+        return (
+          <span style={{ color: expired ? '#ff4d4f' : 'inherit' }}>
+            {date}
+            {expired && ' ⚠️'}
+          </span>
+        );
+      },
+    },
+    { 
+      title: 'Total', 
+      dataIndex: 'total_amount', 
+      key: 'total_amount',
+      width: 120,
+      render: (value) => formatCurrency(value),
+    },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
-      render: (value: Quotation['status']) => <Tag color={statusColor[value]}>{value}</Tag>,
+      width: 150,
+      render: (status: QuotationStatus, record: Quotation) => (
+        <StatusBadge status={status} isExpired={isQuotationExpired(record)} />
+      ),
     },
-    { title: 'Expires', dataIndex: 'expiration_date', key: 'expiration_date' },
+    {
+      title: 'Email Status',
+      key: 'email_status',
+      width: 150,
+      render: (_, record: Quotation) => {
+        if (record.email_sent_count > 0) {
+          return (
+            <Space direction="vertical" size={0}>
+              <Typography.Text style={{ fontSize: 12 }}>
+                Sent {record.email_sent_count}x
+              </Typography.Text>
+              {record.email_sent_at && (
+                <Typography.Text type="secondary" style={{ fontSize: 11 }}>
+                  {dayjs(record.email_sent_at).format('MMM D, h:mm A')}
+                </Typography.Text>
+              )}
+            </Space>
+          );
+        }
+        return <Typography.Text type="secondary" style={{ fontSize: 12 }}>Not sent</Typography.Text>;
+      },
+    },
     {
       key: 'actions',
       width: 150,
@@ -138,27 +139,18 @@ const QuotationsPage = () => {
           type="link"
           icon={<MailOutlined />}
           loading={emailMutation.isPending && emailMutation.variables === record.id}
-          onClick={() => emailMutation.mutate(record.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            emailMutation.mutate(record.id);
+          }}
         >
-          Send Email
+          {record.email_sent_count > 0 ? 'Resend' : 'Send Email'}
         </Button>
       ),
     },
   ];
 
-  const handleCreate = (values: QuotationFormValues) => {
-    const items = values.quotation_items?.length ? values.quotation_items : [];
-    if (items.length === 0) {
-      message.error('Add at least one line item');
-      return;
-    }
-    createMutation.mutate({
-      ...values,
-      date: values.date.format('YYYY-MM-DD'),
-      expiration_date: values.expiration_date.format('YYYY-MM-DD'),
-      quotation_items: items,
-    });
-  };
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -171,97 +163,54 @@ const QuotationsPage = () => {
             Generate quotations and share offers with prospects.
           </Typography.Text>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => setDrawerOpen(true)}>
-          New Quotation
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/sales/quotations/new')}>
+          Create Quotation
         </Button>
       </div>
+      
       <Card>
-        <Table<Quotation>
-          rowKey="id"
-          columns={columns}
-          dataSource={quotations}
-          loading={isLoading}
-          pagination={{ pageSize: 10 }}
-        />
-      </Card>
-
-      <Drawer
-        title="Create Quotation"
-        width={640}
-        destroyOnClose
-        open={isDrawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      >
-        <Form<QuotationFormValues>
-          layout="vertical"
-          form={form}
-          onFinish={handleCreate}
-          initialValues={{
-            status: 'QUOTATION',
-            date: dayjs(),
-            expiration_date: dayjs().add(14, 'day'),
-          }}
-        >
-          <Form.Item name="customer_id" label="Customer" rules={[{ required: true, message: 'Select customer' }]}> 
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          {/* Filters */}
+          <Space wrap>
             <Select
-              showSearch
-              placeholder="Customer"
-              optionFilterProp="label"
-              options={customers.map((customer) => ({ label: customer.name, value: customer.id }))}
-            />
-          </Form.Item>
-          <Space size="large" wrap>
-            <Form.Item name="date" label="Date" rules={[{ required: true }]}>
-              <DatePicker format="YYYY-MM-DD" />
-            </Form.Item>
-            <Form.Item name="expiration_date" label="Expiration" rules={[{ required: true }]}>
-              <DatePicker format="YYYY-MM-DD" />
-            </Form.Item>
-          </Space>
-          <Form.Item
-            name="invoicing_and_shipping_address"
-            label="Billing & Shipping Address"
-            rules={[{ required: true, message: 'Enter address' }]}
-          >
-            <Input.TextArea rows={3} />
-          </Form.Item>
-          <Form.Item name="status" label="Status">
-            <Select
+              placeholder="Filter by status"
+              allowClear
+              style={{ width: 200 }}
+              value={statusFilter}
+              onChange={setStatusFilter}
               options={[
-                { label: 'Quotation', value: 'QUOTATION' },
-                { label: 'Negotiation', value: 'NEGOTIATION' },
-                { label: 'Approved', value: 'APPROVED' },
-                { label: 'Rejected', value: 'REJECTED' },
+                { label: 'Quotation', value: 'quotation' },
+                { label: 'Quotation Sent', value: 'quotation_sent' },
+                { label: 'Accepted', value: 'accepted' },
+                { label: 'Rejected', value: 'rejected' },
+                { label: 'Cancelled', value: 'cancelled' },
+                { label: 'Expired', value: 'expired' },
               ]}
             />
-          </Form.Item>
+            <Input
+              placeholder="Search quotation number or customer..."
+              prefix={<SearchOutlined />}
+              allowClear
+              style={{ width: 300 }}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </Space>
 
-          <Form.List name="quotation_items">
-            {(fields, { add, remove }) => (
-              <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                <Typography.Title level={5}>Line Items</Typography.Title>
-                {fields.map((field) => (
-                  <QuotationItemFields key={field.key} name={field.name} remove={remove} products={products} />
-                ))}
-                <Button type="dashed" onClick={() => add({ quantity: 1 } as QuotationItemCreatePayload)} block>
-                  Add Item
-                </Button>
-              </Space>
-            )}
-          </Form.List>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={createMutation.isPending}>
-                Create Quotation
-              </Button>
-              <Button htmlType="button" onClick={() => form.resetFields()}>
-                Reset
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      </Drawer>
+          {/* Table */}
+          <Table<Quotation>
+            rowKey="id"
+            columns={columns}
+            dataSource={quotations}
+            loading={isLoading}
+            pagination={{ pageSize: 10 }}
+            onRow={(record) => ({
+              onClick: () => navigate(`/sales/quotations/${record.id}`),
+              style: { cursor: 'pointer' },
+            })}
+          />
+        </Space>
+      </Card>
     </div>
   );
 };

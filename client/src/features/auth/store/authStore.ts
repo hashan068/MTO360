@@ -58,15 +58,29 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
         } catch (error) {
-          let message = 'Unable to sign in. Please try again.';
+          let message = 'Unable to sign in. Please check your credentials and try again.';
+          
           if (error instanceof AxiosError) {
-            message =
-              (error.response?.data as { detail?: string })?.detail ??
-              error.message ??
-              message;
+            const status = error.response?.status;
+            const detail = (error.response?.data as { detail?: string })?.detail;
+            
+            if (status === 401) {
+              message = detail || 'Invalid username or password. Please check your credentials.';
+            } else if (status === 403) {
+              message = detail || 'Your account has been deactivated. Please contact support.';
+            } else if (status === 400) {
+              message = detail || 'Please provide valid username and password.';
+            } else if (status === 500) {
+              message = 'Server error. Please try again later.';
+            } else if (detail) {
+              message = detail;
+            } else if (error.message) {
+              message = error.message;
+            }
           } else if (error instanceof Error) {
             message = error.message;
           }
+          
           set({ isAuthenticating: false, error: message });
           throw error;
         }
@@ -87,14 +101,26 @@ export const useAuthStore = create<AuthState>()(
           });
         } catch (error) {
           let message = 'Unable to create account. Please try again.';
+          
           if (error instanceof AxiosError) {
-            message =
-              (error.response?.data as { detail?: string })?.detail ??
-              error.message ??
-              message;
+            const status = error.response?.status;
+            const detail = (error.response?.data as { detail?: string })?.detail;
+            
+            if (status === 400) {
+              message = detail || 'Invalid registration details. Please check your input.';
+            } else if (status === 409 || (detail && detail.includes('already'))) {
+              message = detail || 'This username is already taken. Please choose a different one.';
+            } else if (status === 500) {
+              message = 'Server error. Please try again later.';
+            } else if (detail) {
+              message = detail;
+            } else if (error.message) {
+              message = error.message;
+            }
           } else if (error instanceof Error) {
             message = error.message;
           }
+          
           set({ isAuthenticating: false, error: message });
           throw error;
         }

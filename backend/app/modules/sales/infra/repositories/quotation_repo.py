@@ -22,19 +22,44 @@ class QuotationRepository:
         """Get quotation by ID"""
         result = await self.db.execute(
             select(Quotation)
-            .options(selectinload(Quotation.customer), selectinload(Quotation.quotation_items))
+            .options(
+                selectinload(Quotation.customer),
+                selectinload(Quotation.quotation_items),
+                selectinload(Quotation.rfq),
+                selectinload(Quotation.sales_orders)
+            )
             .where(Quotation.id == quotation_id)
         )
         return result.scalar_one_or_none()
     
-    async def get_all(self, skip: int = 0, limit: int = 100) -> List[Quotation]:
-        """Get all quotations with pagination"""
-        result = await self.db.execute(
-            select(Quotation)
-            .options(
-                selectinload(Quotation.customer),
-                selectinload(Quotation.quotation_items)
+    async def get_all(
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        status_filter: Optional[QuotationStatusEnum] = None,
+        search: Optional[str] = None,
+    ) -> List[Quotation]:
+        """Get all quotations with pagination, filtering, and search"""
+        from app.models.sales import Customer
+        
+        query = select(Quotation).options(
+            selectinload(Quotation.customer),
+            selectinload(Quotation.quotation_items)
+        )
+        
+        # Apply status filter
+        if status_filter:
+            query = query.where(Quotation.status == status_filter)
+        
+        # Apply search filter (search by customer name)
+        if search:
+            search_pattern = f"%{search}%"
+            query = query.join(Customer).where(
+                Customer.name.ilike(search_pattern)
             )
+        
+        result = await self.db.execute(
+            query
             .offset(skip)
             .limit(limit)
             .order_by(Quotation.created_at.desc())

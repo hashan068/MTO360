@@ -21,16 +21,37 @@ class RFQRepository:
         """Get RFQ by ID"""
         result = await self.db.execute(
             select(RFQ)
-            .options(selectinload(RFQ.items))
+            .options(
+                selectinload(RFQ.items),
+                selectinload(RFQ.quotations)
+            )
             .where(RFQ.id == rfq_id)
         )
         return result.scalar_one_or_none()
     
-    async def get_all(self, skip: int = 0, limit: int = 100) -> List[RFQ]:
-        """Get all RFQs with pagination"""
+    async def get_all(
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        status_filter: Optional[RFQStatusEnum] = None,
+        search: Optional[str] = None,
+    ) -> List[RFQ]:
+        """Get all RFQs with pagination, filtering, and search"""
+        query = select(RFQ).options(selectinload(RFQ.items))
+        
+        # Apply status filter
+        if status_filter:
+            query = query.where(RFQ.status == status_filter)
+        
+        # Apply search filter
+        if search:
+            search_pattern = f"%{search}%"
+            query = query.where(
+                RFQ.description.ilike(search_pattern)
+            )
+        
         result = await self.db.execute(
-            select(RFQ)
-            .options(selectinload(RFQ.items))
+            query
             .offset(skip)
             .limit(limit)
             .order_by(RFQ.created_at.desc())

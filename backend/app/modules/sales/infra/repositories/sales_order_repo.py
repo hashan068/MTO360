@@ -26,22 +26,31 @@ class SalesOrderRepository:
             select(SalesOrder)
             .options(
                 selectinload(SalesOrder.customer),
-                selectinload(SalesOrder.order_items).selectinload(SalesOrderItem.product)
+                selectinload(SalesOrder.order_items).selectinload(SalesOrderItem.product),
+                selectinload(SalesOrder.quotation)
             )
             .where(SalesOrder.id == order_id)
         )
         return result.scalar_one_or_none()
     
-    async def get_all(self, skip: int = 0, limit: int = 100,
-                     start_date: Optional[date] = None, end_date: Optional[date] = None) -> List[SalesOrder]:
-        """Get all sales orders with pagination and optional date filtering"""
-        from app.models.sales import SalesOrderItem, Product
+    async def get_all(
+        self,
+        skip: int = 0,
+        limit: int = 100,
+        start_date: Optional[date] = None,
+        end_date: Optional[date] = None,
+        status_filter: Optional[SalesOrderStatusEnum] = None,
+        search: Optional[str] = None,
+    ) -> List[SalesOrder]:
+        """Get all sales orders with pagination, date filtering, status filter, and search"""
+        from app.models.sales import SalesOrderItem, Product, Customer
         
         query = select(SalesOrder).options(
             selectinload(SalesOrder.customer),
             selectinload(SalesOrder.order_items).selectinload(SalesOrderItem.product)
         )
         
+        # Apply date range filter
         if start_date and end_date:
             query = query.where(
                 SalesOrder.created_at >= datetime.combine(start_date, datetime.min.time()),
@@ -51,6 +60,17 @@ class SalesOrderRepository:
             query = query.where(SalesOrder.created_at >= datetime.combine(start_date, datetime.min.time()))
         elif end_date:
             query = query.where(SalesOrder.created_at <= datetime.combine(end_date, datetime.max.time()))
+        
+        # Apply status filter
+        if status_filter:
+            query = query.where(SalesOrder.status == status_filter)
+        
+        # Apply search filter (search by customer name)
+        if search:
+            search_pattern = f"%{search}%"
+            query = query.join(Customer).where(
+                Customer.name.ilike(search_pattern)
+            )
         
         result = await self.db.execute(
             query

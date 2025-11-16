@@ -1,5 +1,5 @@
-import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { App as AntdApp, Button, Checkbox, Divider, Flex, Form, Input, Space, Tabs, Typography } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { App as AntdApp, Button, Checkbox, Divider, Flex, Form, Input, Tabs, Typography } from 'antd';
 import { useState, useEffect } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -51,9 +51,11 @@ const LoginPage = () => {
       await signIn(values.username, values.password);
       message.success('Welcome back!');
       navigate(fromPath, { replace: true });
-    } catch (err) {
-      console.error(err);
-      // Error is handled by the auth store
+    } catch (err: any) {
+      // Error is already set in the auth store and displayed in the form
+      // Show a toast message for additional feedback
+      const errorMessage = err?.response?.data?.detail || error || 'Login failed. Please check your credentials.';
+      message.error(errorMessage);
     }
   };
 
@@ -62,9 +64,11 @@ const LoginPage = () => {
       await signUp(values.username, values.password);
       message.success('Account created successfully!');
       navigate(fromPath, { replace: true });
-    } catch (err) {
-      console.error(err);
-      // Error is handled by the auth store
+    } catch (err: any) {
+      // Error is already set in the auth store and displayed in the form
+      // Show a toast message for additional feedback
+      const errorMessage = err?.response?.data?.detail || error || 'Signup failed. Please try again.';
+      message.error(errorMessage);
     }
   };
 
@@ -81,8 +85,21 @@ const LoginPage = () => {
           size="large"
         >
           {error && activeTab === 'login' && (
-            <div style={{ marginBottom: 16, padding: '12px', background: '#fff2f0', border: '1px solid #ffccc7', borderRadius: '6px', color: '#ff4d4f' }}>
-              {error}
+            <div style={{ 
+              marginBottom: 16, 
+              padding: '12px 16px', 
+              background: '#fff2f0', 
+              border: '1px solid #ffccc7', 
+              borderRadius: '8px', 
+              color: '#cf1322',
+              fontSize: '14px',
+              lineHeight: '1.5',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '8px'
+            }}>
+              <span style={{ fontSize: '16px', marginTop: '1px' }}>⚠️</span>
+              <span>{error}</span>
             </div>
           )}
           <Form.Item
@@ -172,8 +189,21 @@ const LoginPage = () => {
           size="large"
         >
           {error && activeTab === 'signup' && (
-            <div style={{ marginBottom: 16, padding: '12px', background: '#fff2f0', border: '1px solid #ffccc7', borderRadius: '6px', color: '#ff4d4f' }}>
-              {error}
+            <div style={{ 
+              marginBottom: 16, 
+              padding: '12px 16px', 
+              background: '#fff2f0', 
+              border: '1px solid #ffccc7', 
+              borderRadius: '8px', 
+              color: '#cf1322',
+              fontSize: '14px',
+              lineHeight: '1.5',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '8px'
+            }}>
+              <span style={{ fontSize: '16px', marginTop: '1px' }}>⚠️</span>
+              <span>{error}</span>
             </div>
           )}
           <Form.Item

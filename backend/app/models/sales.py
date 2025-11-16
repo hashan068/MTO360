@@ -11,6 +11,7 @@ from sqlalchemy import (
     DateTime,
     Date,
     Enum as SQLEnum,
+    JSON,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional
@@ -118,6 +119,7 @@ class RFQ(Base, TimestampMixin):
     
     # Relationships
     items: Mapped[list["RFQItem"]] = relationship("RFQItem", back_populates="rfq", cascade="all, delete-orphan")
+    quotations: Mapped[list["Quotation"]] = relationship("Quotation", back_populates="rfq")
     
     def __repr__(self):
         return f"<RFQ(id={self.id}, status={self.status.value})>"
@@ -147,16 +149,22 @@ class Quotation(Base, TimestampMixin):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     customer_id: Mapped[int] = mapped_column(Integer, ForeignKey("customers.id"), nullable=False)
+    rfq_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("rfqs.id", ondelete="SET NULL"), nullable=True)
     date: Mapped[date] = mapped_column(Date, nullable=False)
     expiration_date: Mapped[date] = mapped_column(Date, nullable=False)
     invoicing_and_shipping_address: Mapped[str] = mapped_column(Text, nullable=False)
     total_amount: Mapped[Numeric] = mapped_column(Numeric(10, 2), default=0.0, nullable=False)
     status: Mapped[QuotationStatusEnum] = mapped_column(SQLEnum(QuotationStatusEnum), default=QuotationStatusEnum.QUOTATION, nullable=False)
     created_by_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    email_sent_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    email_sent_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    email_history: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     
     # Relationships
     customer: Mapped["Customer"] = relationship("Customer", back_populates="quotations")
+    rfq: Mapped[Optional["RFQ"]] = relationship("RFQ", back_populates="quotations")
     quotation_items: Mapped[list["QuotationItem"]] = relationship("QuotationItem", back_populates="quotation", cascade="all, delete-orphan")
+    sales_orders: Mapped[list["SalesOrder"]] = relationship("SalesOrder", back_populates="quotation")
     
     def __repr__(self):
         return f"<Quotation(id={self.id}, customer_id={self.customer_id}, total_amount={self.total_amount})>"
@@ -186,11 +194,14 @@ class SalesOrder(Base, TimestampMixin):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     customer_id: Mapped[int] = mapped_column(Integer, ForeignKey("customers.id"), nullable=False)
+    quotation_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("quotations.id", ondelete="SET NULL"), nullable=True)
     total_amount: Mapped[Numeric] = mapped_column(Numeric(10, 2), default=0.0, nullable=False)
     status: Mapped[SalesOrderStatusEnum] = mapped_column(SQLEnum(SalesOrderStatusEnum), default=SalesOrderStatusEnum.PENDING, nullable=False)
+    delivery_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     
     # Relationships
     customer: Mapped["Customer"] = relationship("Customer", back_populates="sales_orders")
+    quotation: Mapped[Optional["Quotation"]] = relationship("Quotation", back_populates="sales_orders")
     order_items: Mapped[list["SalesOrderItem"]] = relationship("SalesOrderItem", back_populates="order", cascade="all, delete-orphan")
     
     def __repr__(self):

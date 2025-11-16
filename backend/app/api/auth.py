@@ -38,20 +38,34 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ):
     """Login endpoint - Get JWT tokens"""
+    # Validate input
+    if not request.username or not request.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username and password are required"
+        )
+    
     result = await db.execute(select(User).where(User.username == request.username))
     user = result.scalar_one_or_none()
     
-    if not user or not verify_password(request.password, user.password_hash):
+    if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Invalid username or password. Please check your credentials and try again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    if not verify_password(request.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password. Please check your credentials and try again.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="User is inactive"
+            detail="Your account has been deactivated. Please contact support for assistance."
         )
     
     # Create tokens
@@ -75,6 +89,27 @@ async def register(
     db: AsyncSession = Depends(get_db),
 ):
     """Register a new user (development only)"""
+    # Validate input
+    if not request.username or not request.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username and password are required"
+        )
+    
+    # Validate username length
+    if len(request.username) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username must be at least 3 characters long"
+        )
+    
+    # Validate password strength
+    if len(request.password) < 8:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 8 characters long"
+        )
+    
     # Check if user already exists
     result = await db.execute(select(User).where(User.username == request.username))
     existing_user = result.scalar_one_or_none()
@@ -82,37 +117,44 @@ async def register(
     if existing_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already exists"
+            detail="This username is already taken. Please choose a different username."
         )
     
-    # Create new user
-    password_hash = get_password_hash(request.password)
-    user = User(
-        username=request.username,
-        email=None,
-        password_hash=password_hash,
-        is_active=True,
-        is_superuser=False,
-        is_staff=False,
-    )
-    
-    db.add(user)
-    await db.commit()
-    await db.refresh(user)
-    
-    # Create tokens for immediate login
-    access_token = create_access_token(data={"sub": user.username})
-    refresh_token = create_refresh_token(data={"sub": user.username})
-    
-    return TokenResponse(
-        access=access_token,
-        refresh=refresh_token,
-        user={
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-        }
-    )
+    try:
+        # Create new user
+        password_hash = get_password_hash(request.password)
+        user = User(
+            username=request.username,
+            email=None,
+            password_hash=password_hash,
+            is_active=True,
+            is_superuser=False,
+            is_staff=False,
+        )
+        
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        
+        # Create tokens for immediate login
+        access_token = create_access_token(data={"sub": user.username})
+        refresh_token = create_refresh_token(data={"sub": user.username})
+        
+        return TokenResponse(
+            access=access_token,
+            refresh=refresh_token,
+            user={
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+            }
+        )
+    except Exception as e:
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while creating your account. Please try again."
+        )
 
 
 @router.post("/token/refresh")
