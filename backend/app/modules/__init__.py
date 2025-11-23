@@ -50,3 +50,17 @@ register_module("sales", "app.modules.sales.api.router", "router")
 register_module("manufacturing", "app.modules.manufacturing.api.router", "router")
 register_module("notifications", "app.modules.notifications.api.router", "router")
 
+# Material availability router (additional inventory module route)
+try:
+    from app.modules.inventory.api.material_availability import router as material_router
+    module_registry["material-availability"] = {"router": material_router}
+except ImportError as e:
+    print(f"Warning: Could not import material_availability router: {e}")
+
+# Production integration router (additional sales module route)
+try:
+    from app.modules.sales.api.production_integration import router as prod_integration_router
+    module_registry["production-integration"] = {"router": prod_integration_router}
+except ImportError as e:
+    print(f"Warning: Could not import production_integration router: {e}")
+

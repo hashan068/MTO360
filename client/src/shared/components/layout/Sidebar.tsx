@@ -1,4 +1,14 @@
-import { DashboardOutlined, DatabaseOutlined, ShoppingCartOutlined, ToolOutlined } from '@ant-design/icons';
+import {
+  DashboardOutlined,
+  DatabaseOutlined,
+  ShoppingCartOutlined,
+  ToolOutlined,
+  ControlOutlined,
+  ScheduleOutlined,
+  AppstoreOutlined,
+  BarChartOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu, Typography } from 'antd';
 import { useMemo } from 'react';
@@ -45,9 +55,36 @@ const menuItems: MenuProps['items'] = [
       { key: '/manufacturing/boms', label: 'BOMs' },
       { key: '/manufacturing/orders', label: 'Orders' },
       { key: '/manufacturing/material-requisitions', label: 'Material Reqs' },
+      { type: 'divider' },
+      {
+        key: '/manufacturing/shop-floor',
+        label: 'Shop Floor',
+        icon: <TeamOutlined />,
+      },
+      {
+        key: '/manufacturing/scheduler',
+        label: 'Scheduler',
+        icon: <ScheduleOutlined />,
+      },
+      {
+        key: '/manufacturing/work-centers',
+        label: 'Work Centers',
+        icon: <AppstoreOutlined />,
+      },
+      {
+        key: '/manufacturing/operation-routes',
+        label: 'Operation Routes',
+        icon: <ControlOutlined />,
+      },
+      {
+        key: '/manufacturing/analytics',
+        label: 'Analytics',
+        icon: <BarChartOutlined />,
+      },
     ],
   },
 ];
+
 
 const findOpenKey = (path: string): string | undefined => {
   if (path.startsWith('/inventory')) return 'inventory-menu';

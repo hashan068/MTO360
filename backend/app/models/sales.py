@@ -102,6 +102,7 @@ class Product(Base, TimestampMixin):
     sales_order_items: Mapped[list["SalesOrderItem"]] = relationship("SalesOrderItem", back_populates="product")
     bill_of_materials = relationship("BillOfMaterial", back_populates="product")
     manufacturing_orders = relationship("ManufacturingOrder", back_populates="product")
+    operation_routes = relationship("OperationRoute", back_populates="product")  # Production scheduling
     
     def __repr__(self):
         return f"<Product(id={self.id}, name={self.name})>"

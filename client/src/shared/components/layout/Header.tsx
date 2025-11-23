@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/features/auth/store/authStore';
 import { ThemeMode, useUIStore } from '@/shared/state/uiStore';
+import NotificationBell from '@/components/NotificationBell';
 
 const Header = () => {
   const location = useLocation();
@@ -93,6 +94,7 @@ const Header = () => {
           />
           <MoonOutlined style={{ color: theme === 'dark' ? '#722ed1' : undefined }} />
         </Space>
+        <NotificationBell />
         <Dropdown menu={{ items: menuItems }} trigger={['click']}>
           <Space align="center" style={{ cursor: 'pointer' }}>
             <Avatar style={{ backgroundColor: '#1677ff' }}>{initials}</Avatar>

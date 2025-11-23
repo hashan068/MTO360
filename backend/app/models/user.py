@@ -22,6 +22,11 @@ class User(Base, TimestampMixin):
     
     # Relationships
     notifications: Mapped[list["Notification"]] = relationship("Notification", back_populates="user")
+    roles: Mapped[list["Role"]] = relationship(
+        "Role",
+        secondary="user_roles",
+        back_populates="users"
+    )
     
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username})>"

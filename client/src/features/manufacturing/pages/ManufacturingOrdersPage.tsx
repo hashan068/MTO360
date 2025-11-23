@@ -20,6 +20,8 @@ import { completeManufacturing, manufacturingOrdersApi, startManufacturing } fro
 import { productsApi } from '@/features/sales/api';
 import type { ManufacturingOrder, ManufacturingOrderCreatePayload } from '@/features/manufacturing/types';
 import type { Product } from '@/features/sales/types';
+import ProtectedAction from '@/components/ProtectedAction';
+import MaterialStatusCell from '@/features/manufacturing/components/MaterialStatusCell';
 
 const statusColor: Record<ManufacturingOrder['status'], string> = {
   PENDING: 'gold',
@@ -103,30 +105,39 @@ const ManufacturingOrdersPage = () => {
       key: 'status',
       render: (value: ManufacturingOrder['status']) => <Tag color={statusColor[value]}>{value}</Tag>,
     },
+    {
+      title: 'Materials',
+      key: 'materials',
+      render: (_, record) => <MaterialStatusCell moId={record.id} />,
+    },
     { title: 'Created', dataIndex: 'created_at', key: 'created_at' },
     {
       key: 'actions',
       width: 220,
       render: (_, record) => (
         <Space>
-          <Button
-            icon={<PlayCircleOutlined />}
-            type="link"
-            disabled={record.status !== 'PLANNED' && record.status !== 'PENDING'}
-            loading={startMutation.isPending && startMutation.variables === record.id}
-            onClick={() => handleStart(record)}
-          >
-            Start
-          </Button>
-          <Button
-            icon={<CheckOutlined />}
-            type="link"
-            disabled={record.status !== 'IN_PROGRESS'}
-            loading={completeMutation.isPending && completeMutation.variables === record.id}
-            onClick={() => handleComplete(record)}
-          >
-            Complete
-          </Button>
+          <ProtectedAction permission="production.operation.start">
+            <Button
+              icon={<PlayCircleOutlined />}
+              type="link"
+              disabled={record.status !== 'PLANNED' && record.status !== 'PENDING'}
+              loading={startMutation.isPending && startMutation.variables === record.id}
+              onClick={() => handleStart(record)}
+            >
+              Start
+            </Button>
+          </ProtectedAction>
+          <ProtectedAction permission="production.operation.complete">
+            <Button
+              icon={<CheckOutlined />}
+              type="link"
+              disabled={record.status !== 'IN_PROGRESS'}
+              loading={completeMutation.isPending && completeMutation.variables === record.id}
+              onClick={() => handleComplete(record)}
+            >
+              Complete
+            </Button>
+          </ProtectedAction>
         </Space>
       ),
     },
@@ -173,7 +184,7 @@ const ManufacturingOrdersPage = () => {
         onClose={() => setDrawerOpen(false)}
       >
         <Form<ManufacturingOrderCreatePayload> layout="vertical" form={form} onFinish={handleCreate}>
-          <Form.Item name="product_id" label="Product" rules={[{ required: true }]}> 
+          <Form.Item name="product_id" label="Product" rules={[{ required: true }]}>
             <Select
               showSearch
               placeholder="Select product"
@@ -184,7 +195,7 @@ const ManufacturingOrdersPage = () => {
               }))}
             />
           </Form.Item>
-          <Form.Item name="quantity" label="Quantity" rules={[{ required: true }]}> 
+          <Form.Item name="quantity" label="Quantity" rules={[{ required: true }]}>
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="sales_order_item_id" label="Sales Order Item">

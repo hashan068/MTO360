@@ -1,0 +1,1 @@
+ENCODED: {"code": "TEST-WC-070e21b3", "capacity_hours_per_day": 8.0, "location": null, "created_at": "2025-11-23T16:36:20.856567", "id": 38, "name": "Test Assembly Station 070e21b3", "description": "Test Description", "is_active": true, "notes": null, "updated_at": "2025-11-23T16:36:20.856571"}

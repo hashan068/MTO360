@@ -69,6 +69,11 @@ async def init_db():
             MaterialRequisitionItem,
             BillOfMaterial,
             BOMItem,
+            WorkCenter,
+            OperationRoute,
+            RouteOperation,
+            ManufacturingOrderOperation,
+            WorkCenterSchedule,
             Notification,
         )
         await conn.run_sync(Base.metadata.create_all)

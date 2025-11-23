@@ -34,10 +34,20 @@ from app.models.manufacturing import (
     MaterialRequisitionItem,
     BillOfMaterial,
     BOMItem,
+    WorkCenter,
+    OperationRoute,
+    RouteOperation,
+    ManufacturingOrderOperation,
+    WorkCenterSchedule,
 )
 
 from app.models.notifications import (
     Notification,
+)
+
+from app.models.permissions import (
+    Permission,
+    Role,
 )
 
 __all__ = [
@@ -66,7 +76,15 @@ __all__ = [
     "MaterialRequisitionItem",
     "BillOfMaterial",
     "BOMItem",
+    "WorkCenter",
+    "OperationRoute",
+    "RouteOperation",
+    "ManufacturingOrderOperation",
+    "WorkCenterSchedule",
     # Notifications
     "Notification",
+    # Permissions
+    "Permission",
+    "Role",
 ]
 

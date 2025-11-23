@@ -1,4 +1,4 @@
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, EditOutlined } from '@ant-design/icons';
 import {
   App as AntdApp,
   Button,
@@ -19,6 +19,7 @@ import { StatusBadge } from '@/features/sales/components/StatusBadge';
 import { DocumentLink } from '@/features/sales/components/DocumentLink';
 import { LineItemsTable } from '@/features/sales/components/LineItemsTable';
 import { DocumentBreadcrumb } from '@/features/sales/components/DocumentBreadcrumb';
+import ProductionScheduleCard from '@/components/ProductionScheduleCard';
 
 const { Title, Text } = Typography;
 
@@ -107,7 +108,7 @@ const SalesOrderDetailPage = () => {
           <StatusBadge status={salesOrder.status} />
         </Space>
         <Space>
-          <Button 
+          <Button
             icon={<EditOutlined />}
             disabled={!salesOrder.can_edit}
             title={!salesOrder.can_edit ? `Cannot edit sales order with status "${salesOrder.status}"` : undefined}
@@ -169,13 +170,15 @@ const SalesOrderDetailPage = () => {
       </Card>
 
       <Card title="Line Items">
-        <LineItemsTable 
+        <LineItemsTable
           items={salesOrder.order_items.map(item => ({
             ...item,
             unit_price: item.price,
-          }))} 
+          }))}
         />
       </Card>
+
+      <ProductionScheduleCard salesOrderId={salesOrder.id} />
     </div>
   );
 };
