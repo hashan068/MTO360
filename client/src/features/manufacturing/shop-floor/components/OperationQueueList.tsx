@@ -120,7 +120,7 @@ export const OperationQueueList = ({ workCenterId }: OperationQueueListProps) =>
     <>
       <Table
         columns={columns}
-        dataSource={queue}
+        dataSource={queue || []}
         rowKey="operation_id"
         loading={isLoading}
         pagination={{
@@ -141,3 +141,5 @@ export const OperationQueueList = ({ workCenterId }: OperationQueueListProps) =>
     </>
   );
 };
+
+

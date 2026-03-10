@@ -134,7 +134,7 @@ export const BottleneckView = ({ data, isLoading }: BottleneckViewProps) => {
 
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={data || []}
         rowKey="work_center_id"
         pagination={{ pageSize: 10 }}
         size="small"
@@ -149,3 +149,5 @@ export const BottleneckView = ({ data, isLoading }: BottleneckViewProps) => {
     </Card>
   );
 };
+
+

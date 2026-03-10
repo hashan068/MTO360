@@ -55,7 +55,7 @@ const DashboardPage = () => {
 
   const salesStats = useMemo(() => {
     const totalOrders = salesOrders.length;
-    const fulfilled = salesOrders.filter((order) => order.status === 'FULFILLED').length;
+    const fulfilled = salesOrders.filter((order) => order.status === 'delivered').length;
     const fulfillmentRate = totalOrders === 0 ? 0 : Math.round((fulfilled / totalOrders) * 100);
     return { totalOrders, fulfilled, fulfillmentRate };
   }, [salesOrders]);
@@ -181,7 +181,7 @@ const DashboardPage = () => {
               size="small"
               pagination={false}
               columns={recentOrdersColumns}
-              dataSource={salesOrders.slice(0, 5)}
+              dataSource={salesOrders.slice(0, 5) || []}
             />
           </Card>
         </Col>
@@ -200,7 +200,7 @@ const DashboardPage = () => {
                 { title: 'Supplier', dataIndex: ['purchase_requisition', 'supplier_name'], key: 'supplier' },
                 { title: 'Total', dataIndex: 'total_price', key: 'total_price', render: (value) => formatCurrency(value) },
               ]}
-              dataSource={purchaseOrders.slice(0, 5)}
+              dataSource={purchaseOrders.slice(0, 5) || []}
             />
           </Card>
         </Col>
@@ -218,3 +218,5 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
+

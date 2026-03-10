@@ -94,7 +94,7 @@ const BillOfMaterialsPage = () => {
       <Card>
         <Table<BillOfMaterial>
           rowKey="id"
-          dataSource={boms}
+          dataSource={boms || []}
           columns={columns}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
@@ -104,7 +104,7 @@ const BillOfMaterialsPage = () => {
       <Drawer
         title="Create Bill of Material"
         width={640}
-        destroyOnClose
+        destroyOnHidden
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
@@ -180,3 +180,5 @@ const BillOfMaterialsPage = () => {
 };
 
 export default BillOfMaterialsPage;
+
+

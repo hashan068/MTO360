@@ -143,7 +143,7 @@ const SuppliersPage = () => {
       <Card>
         <Table<Supplier>
           rowKey="id"
-          dataSource={suppliers}
+          dataSource={suppliers || []}
           columns={columns}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
@@ -153,7 +153,7 @@ const SuppliersPage = () => {
       <Drawer
         title={drawerMode === 'create' ? 'Add Supplier' : `Edit ${editingSupplier?.name}`}
         width={480}
-        destroyOnClose
+        destroyOnHidden
         open={isDrawerOpen}
         onClose={() => {
           setEditingSupplier(null);
@@ -198,3 +198,5 @@ const SuppliersPage = () => {
 };
 
 export default SuppliersPage;
+
+

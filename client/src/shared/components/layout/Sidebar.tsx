@@ -1,6 +1,7 @@
 import {
   DashboardOutlined,
   DatabaseOutlined,
+  ShoppingOutlined,
   ShoppingCartOutlined,
   ToolOutlined,
   ControlOutlined,
@@ -8,6 +9,7 @@ import {
   AppstoreOutlined,
   BarChartOutlined,
   TeamOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu, Typography } from 'antd';
@@ -31,6 +33,19 @@ const menuItems: MenuProps['items'] = [
       { key: '/inventory/purchase-orders', label: 'Purchase Orders' },
       { key: '/inventory/suppliers', label: 'Suppliers' },
       { key: '/inventory/reports', label: 'Reports' },
+    ],
+  },
+  {
+    key: 'procurement-menu',
+    icon: <ShoppingOutlined />,
+    label: 'Procurement',
+    children: [
+      { key: '/procurement', label: 'Dashboard' },
+      { key: '/procurement/suppliers/rankings', label: 'Supplier Rankings' },
+      { key: '/procurement/rfqs', label: 'RFQs & Bidding' },
+      { key: '/procurement/contracts', label: 'Contracts' },
+      { key: '/procurement/inventory/below-rop', label: 'Inventory Optimization' },
+      { key: '/procurement/cost-analysis', label: 'Cost Analysis' },
     ],
   },
   {
@@ -83,13 +98,31 @@ const menuItems: MenuProps['items'] = [
       },
     ],
   },
+  {
+    key: 'quality-menu',
+    icon: <SafetyCertificateOutlined />,
+    label: 'Quality',
+    children: [
+      { key: '/quality/dashboard', label: 'Dashboard' },
+      { key: '/quality/inspector', label: 'Inspector' },
+      { key: '/quality/defects', label: 'Defects' },
+      { key: '/quality/ncrs', label: 'NCRs' },
+      { key: '/quality/capas', label: 'CAPAs' },
+      { key: '/quality/rework', label: 'Rework Queue' },
+      { key: '/quality/analytics', label: 'Analytics' },
+      { type: 'divider' },
+      { key: '/quality/inspections/points', label: 'Inspection Points' },
+    ],
+  },
 ];
 
 
 const findOpenKey = (path: string): string | undefined => {
   if (path.startsWith('/inventory')) return 'inventory-menu';
+  if (path.startsWith('/procurement')) return 'procurement-menu';
   if (path.startsWith('/sales')) return 'sales-menu';
   if (path.startsWith('/manufacturing')) return 'manufacturing-menu';
+  if (path.startsWith('/quality')) return 'quality-menu';
   if (path.startsWith('/dashboard')) return '/dashboard';
   return undefined;
 };
@@ -142,3 +175,4 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
+

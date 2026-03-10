@@ -19,6 +19,7 @@
     "dayjs": "^1.11.13",
     "file-saver": "^2.0.5",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.554.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.28.0",

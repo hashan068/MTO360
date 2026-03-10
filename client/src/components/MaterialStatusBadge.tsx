@@ -1,5 +1,5 @@
 import React from 'react';
-import { CheckCircle, AlertTriangle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface MaterialStatusBadgeProps {
   canSchedule: boolean;
@@ -79,3 +79,4 @@ const MaterialStatusBadge: React.FC<MaterialStatusBadgeProps> = ({
 };
 
 export default MaterialStatusBadge;
+

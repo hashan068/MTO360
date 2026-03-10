@@ -71,7 +71,7 @@ export const WorkCenterForm = ({ open, editingId, onClose }: WorkCenterFormProps
       confirmLoading={isSubmitting}
       okText={isEditing ? 'Update' : 'Create'}
       width={600}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}
@@ -152,3 +152,4 @@ export const WorkCenterForm = ({ open, editingId, onClose }: WorkCenterFormProps
     </Modal>
   );
 };
+

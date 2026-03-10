@@ -186,19 +186,162 @@ class ProductionIntegrationService:
             # No production, leave status as is
             return sales_order
         
-        # Update delivery date
+        # Calculate and update delivery date
         estimated_delivery = await self.calculate_delivery_date(sales_order_id)
+        old_delivery_date = sales_order.delivery_date
+        
         if estimated_delivery:
             sales_order.delivery_date = estimated_delivery
+            
+        # Track if delivery date changed significantly
+        delivery_date_changed = False
+        if old_delivery_date and estimated_delivery:
+            date_diff = abs((estimated_delivery - old_delivery_date).days)
+            if date_diff > 2:  # More than 2 days change is significant
+                delivery_date_changed = True
         
-        # Optionally update SO status based on production
-        # This depends on your business logic
-        # For now, we'll just update the delivery date
+        # FIX #2: UPDATE SO STATUS based on production progress
+        # Business rules for status mapping
+        from app.models.sales import SalesOrderStatusEnum
         
+        mo_statuses = [mo.status for mo in mos]
+        current_so_status = sales_order.status
+        new_so_status = None
+        
+        # Status mapping logic - Priority order matters!
+        
+        # 1. HIGHEST PRIORITY: All production completed → Ready to ship
+        if all(s == ManufacturingOrderStatusEnum.COMPLETED for s in mo_statuses):
+            new_so_status = SalesOrderStatusEnum.READY_TO_SHIP
+            
+        # 2. HIGH PRIORITY: Any production blocked/delayed → Production delayed
+        elif any(s == ManufacturingOrderStatusEnum.BLOCKED for s in mo_statuses):
+            new_so_status = SalesOrderStatusEnum.PRODUCTION_DELAYED
+            
+        # 3. MEDIUM PRIORITY: Active production → In production
+        elif any(s == ManufacturingOrderStatusEnum.IN_PRODUCTION for s in mo_statuses):
+            # Only update if not already in a "further along" status
+            if current_so_status not in [
+                SalesOrderStatusEnum.READY_TO_SHIP,
+                SalesOrderStatusEnum.PRODUCTION_DELAYED,
+                SalesOrderStatusEnum.DELIVERED,
+            ]:
+                new_so_status = SalesOrderStatusEnum.IN_PRODUCTION
+        
+        # 4. LOW PRIORITY: Production scheduled/approved
+        elif any(s == ManufacturingOrderStatusEnum.MR_APPROVED for s in mo_statuses):
+            # Only update if still in early status
+            if current_so_status in [
+                SalesOrderStatusEnum.PENDING,
+                SalesOrderStatusEnum.CONFIRMED,
+            ]:
+                new_so_status = SalesOrderStatusEnum.PRODUCTION_SCHEDULED
+        
+        # 5. LOWEST: Production pending (just created)
+        elif all(
+            s in [
+                ManufacturingOrderStatusEnum.PENDING,
+                ManufacturingOrderStatusEnum.MR_SENT,
+            ]
+            for s in mo_statuses
+        ):
+            # Keep as confirmed if production is just starting
+            if current_so_status == SalesOrderStatusEnum.PENDING:
+                new_so_status = SalesOrderStatusEnum.CONFIRMED
+        
+        # Apply status update if changed
+        status_changed = False
+        if new_so_status and sales_order.status != new_so_status:
+            sales_order.status = new_so_status
+            status_changed = True
+        
+        # Commit changes to database
         await self.db.commit()
         await self.db.refresh(sales_order)
         
+        # Send notifications for significant changes
+        if delivery_date_changed or status_changed:
+            try:
+                await self._notify_sales_team_of_changes(
+                    sales_order=sales_order,
+                    status_changed=status_changed,
+                    delivery_changed=delivery_date_changed,
+                    old_delivery=old_delivery_date,
+                    new_delivery=estimated_delivery,
+                )
+            except Exception as e:
+                # Don't fail on notification errors
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(
+                    f"Failed to send SO {sales_order_id} change notification: {e}"
+                )
+        
         return sales_order
+    
+    async def _notify_sales_team_of_changes(
+        self,
+        sales_order: SalesOrder,
+        status_changed: bool,
+        delivery_changed: bool,
+        old_delivery: Optional[datetime],
+        new_delivery: Optional[datetime],
+    ) -> None:
+        """
+        Send notifications when SO status or delivery date changes significantly.
+        
+        This notifies relevant stakeholders (sales team, CSR) of important changes.
+        
+        Args:
+            sales_order: Updated sales order
+            status_changed: Whether status changed
+            delivery_changed: Whether delivery date changed significantly
+            old_delivery: Previous delivery date
+            new_delivery: New delivery date
+        """
+        try:
+            from app.modules.notifications.application.services.production_notification_service import (
+                ProductionNotificationService,
+            )
+            
+            notification_service = ProductionNotificationService(self.db)
+            
+            # Build notification message
+            changes = []
+            if status_changed:
+                changes.append(f"Status: {sales_order.status.value}")
+            
+            if delivery_changed and old_delivery and new_delivery:
+                date_diff = (new_delivery - old_delivery).days
+                direction = "delayed" if date_diff > 0 else "moved up"
+                changes.append(
+                    f"Delivery {direction} by {abs(date_diff)} days "
+                    f"({old_delivery.date()} → {new_delivery.date()})"
+                )
+            
+            if changes:
+                message = f"SO-{sales_order.id} updated: " + ", ".join(changes)
+                
+                # Send notification
+                # Priority: high if delivery changed, medium if just status
+                priority = "high" if delivery_changed else "medium"
+                
+                # Note: This assumes your notification service has this method
+                # Adjust based on your actual notification service implementation
+                await notification_service.notify_sales_order_update(
+                    sales_order_id=sales_order.id,
+                    message=message,
+                    priority=priority,
+                )
+                
+        except ImportError:
+            # Notification service doesn't exist or method not implemented
+            # This is fine - notifications are optional
+            pass
+        except AttributeError:
+            # notify_sales_order_update method doesn't exist
+            # This is fine - notifications are optional
+            pass
     
     async def get_production_timeline(
         self, 

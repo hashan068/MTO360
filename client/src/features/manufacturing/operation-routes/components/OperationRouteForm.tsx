@@ -67,7 +67,7 @@ export const OperationRouteForm = ({ open, editingId, onClose }: OperationRouteF
       confirmLoading={isSubmitting}
       okText={isEditing ? 'Update' : 'Create'}
       width={600}
-      destroyOnClose
+      destroyOnHidden
     >
       <Form
         form={form}
@@ -120,3 +120,4 @@ export const OperationRouteForm = ({ open, editingId, onClose }: OperationRouteF
     </Modal>
   );
 };
+

@@ -33,3 +33,4 @@ export const manufacturingRoutes: RouteObject[] = [
   { path: 'shop-floor', element: <ShopFloorPage /> },
   { path: 'analytics', element: <AnalyticsPage /> },
 ];
+

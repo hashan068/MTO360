@@ -74,3 +74,4 @@ export const UtilizationChart = ({ data, isLoading }: UtilizationChartProps) => 
     </Card>
   );
 };
+

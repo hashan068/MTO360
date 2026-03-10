@@ -44,8 +44,10 @@ class SalesOrderStatusEnum(str, enum.Enum):
     PENDING = "pending"
     CONFIRMED = "confirmed"
     PROCESSING = "processing"
-    IN_PRODUCTION = "in_Production"
-    READY_FOR_DELIVERY = "Ready_for_delivery"
+    PRODUCTION_SCHEDULED = "production_scheduled"  # NEW: MOs created and scheduled
+    IN_PRODUCTION = "in_production"  # FIXED: typo (was "in_Production")
+    PRODUCTION_DELAYED = "production_delayed"  # NEW: Production blocked/delayed
+    READY_TO_SHIP = "ready_to_ship"  # RENAMED: was "READY_FOR_DELIVERY"
     CANCELLED = "cancelled"
     DELIVERED = "delivered"
 

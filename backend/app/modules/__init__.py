@@ -48,7 +48,9 @@ def register_module(
 register_module("inventory", "app.modules.inventory.api.router", "router")
 register_module("sales", "app.modules.sales.api.router", "router")
 register_module("manufacturing", "app.modules.manufacturing.api.router", "router")
+register_module("quality", "app.modules.quality.api", "quality_router")
 register_module("notifications", "app.modules.notifications.api.router", "router")
+register_module("procurement", "app.modules.procurement.api.router", "router")
 
 # Material availability router (additional inventory module route)
 try:
@@ -63,4 +65,3 @@ try:
     module_registry["production-integration"] = {"router": prod_integration_router}
 except ImportError as e:
     print(f"Warning: Could not import production_integration router: {e}")
-

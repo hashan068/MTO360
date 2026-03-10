@@ -64,6 +64,19 @@ class Supplier(Base, TimestampMixin):
     components: Mapped[list["Component"]] = relationship("Component", back_populates="supplier")
     purchase_orders: Mapped[list["PurchaseOrder"]] = relationship("PurchaseOrder", back_populates="supplier")
     
+    # Procurement module relationships
+    performance_records: Mapped[list["SupplierPerformance"]] = relationship(
+        "SupplierPerformance",
+        back_populates="supplier",
+        cascade="all, delete-orphan"
+    )
+    contracts: Mapped[list["SupplierContract"]] = relationship(
+        "SupplierContract",
+        back_populates="supplier",
+        cascade="all, delete-orphan"
+    )
+
+    
     def __repr__(self):
         return f"<Supplier(id={self.id}, name={self.name})>"
 
@@ -107,6 +120,15 @@ class Component(Base, TimestampMixin):
     consumption_transactions = relationship("ConsumptionTransaction", back_populates="component")
     material_requisition_items = relationship("MaterialRequisitionItem", back_populates="component")
     bom_items = relationship("BOMItem", back_populates="component")
+    
+    # Procurement module relationship
+    inventory_policy: Mapped[Optional["ComponentInventoryPolicy"]] = relationship(
+        "ComponentInventoryPolicy",
+        back_populates="component",
+        uselist=False,
+        cascade="all, delete-orphan"
+    )
+
     
     def __repr__(self):
         return f"<Component(id={self.id}, name={self.name}, quantity={self.quantity})>"

@@ -39,7 +39,7 @@ const SalesDashboardPage = () => {
 
   const pipelineStats = useMemo(() => {
     const totalQuotations = quotations.length;
-    const approved = quotations.filter((quotation) => quotation.status === 'APPROVED').length;
+    const approved = quotations.filter((quotation) => quotation.status === 'accepted').length;
     const conversionRate = totalQuotations === 0 ? 0 : Math.round((approved / totalQuotations) * 100);
     return { totalQuotations, approved, conversionRate };
   }, [quotations]);
@@ -77,7 +77,7 @@ const SalesDashboardPage = () => {
           <Card>
             <Statistic title="Sales Orders" value={salesOrders.length} suffix="open" />
             <Typography.Text type="secondary">
-              {salesOrders.filter((order) => order.status === 'FULFILLED').length} fulfilled this month
+              {salesOrders.filter((order) => order.status === 'delivered').length} fulfilled this month
             </Typography.Text>
           </Card>
         </Col>
@@ -92,7 +92,7 @@ const SalesDashboardPage = () => {
             <Table<SalesOrder>
               rowKey="id"
               columns={recentOrdersColumns}
-              dataSource={salesOrders.slice(0, 6)}
+              dataSource={salesOrders.slice(0, 6) || []}
               pagination={false}
               size="small"
             />
@@ -104,9 +104,9 @@ const SalesDashboardPage = () => {
             extra={<Typography.Link onClick={() => navigate('/sales/products')}>Manage products</Typography.Link>}
           >
             <List
-              dataSource={products.slice(0, 5)}
+              dataSource={products.slice(0, 5) || []}
               renderItem={(product) => (
-                <List.Item actions={[<span key="price">{formatCurrency(product.price)}</span>]}> 
+                <List.Item actions={[<span key="price">{formatCurrency(product.price)}</span>]}>
                   <List.Item.Meta
                     title={product.product_name ?? product.description}
                     description={`Power rating ${product.power_rating}W • Warranty ${product.warranty_years} years`}
@@ -125,9 +125,9 @@ const SalesDashboardPage = () => {
             extra={<Typography.Link onClick={() => navigate('/sales/quotations')}>Quotation board</Typography.Link>}
           >
             <List
-              dataSource={quotations.slice(0, 5)}
+              dataSource={quotations.slice(0, 5) || []}
               renderItem={(quotation) => (
-                <List.Item actions={[<span key="amount">{formatCurrency(quotation.total_amount)}</span>]}> 
+                <List.Item actions={[<span key="amount">{formatCurrency(quotation.total_amount)}</span>]}>
                   <List.Item.Meta
                     title={`Quotation #${quotation.id}`}
                     description={`${quotation.customer_name ?? 'Customer'} • Status ${quotation.status}`}
@@ -140,9 +140,9 @@ const SalesDashboardPage = () => {
         <Col xs={24} lg={12}>
           <Card title="Customer Activity" extra={<Typography.Link onClick={() => navigate('/sales/customers')}>Customer list</Typography.Link>}>
             <List
-              dataSource={customers.slice(0, 5)}
+              dataSource={customers.slice(0, 5) || []}
               renderItem={(customer) => (
-                <List.Item actions={[<span key="city">{customer.city}</span>]}> 
+                <List.Item actions={[<span key="city">{customer.city}</span>]}>
                   <List.Item.Meta
                     title={customer.name}
                     description={`${customer.email} • ${customer.phone}`}
@@ -158,3 +158,5 @@ const SalesDashboardPage = () => {
 };
 
 export default SalesDashboardPage;
+
+

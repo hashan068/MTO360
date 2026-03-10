@@ -45,6 +45,25 @@ class ShopFloorService:
         if not operation:
             raise ValueError(f"Operation {operation_id} not found")
 
+        # QUALITY INTEGRATION: Check for quality holds
+        try:
+            from app.modules.manufacturing.application.services.async_quality_integration import (
+                AsyncManufacturingQualityValidator
+            )
+            validator = AsyncManufacturingQualityValidator(self.db)
+            quality_check = await validator.validate_operation_start(
+                operation_id, operation.manufacturing_order_id
+            )
+            
+            if not quality_check["can_start"]:
+                raise ValueError(
+                    f"Cannot start operation: {quality_check['reason']} "
+                    f"(Hold #{quality_check.get('hold_number', 'N/A')})"
+                )
+        except ImportError:
+            # Quality module not available, continue without check
+            pass
+
         # Validate status
         if operation.status not in [
             OperationStatusEnum.SCHEDULED,
@@ -110,6 +129,31 @@ class ShopFloorService:
         operation = await self.mo_operation_repo.get_by_id(operation_id)
         if not operation:
             raise ValueError(f"Operation {operation_id} not found")
+
+        # QUALITY INTEGRATION: Check inspection requirements
+        try:
+            from app.modules.manufacturing.application.services.async_quality_integration import (
+                AsyncManufacturingQualityValidator
+            )
+            validator = AsyncManufacturingQualityValidator(self.db)
+            quality_check = await validator.validate_operation_completion(operation_id)
+            
+            if not quality_check["can_complete"]:
+                raise ValueError(
+                    f"Cannot complete operation: {quality_check['reason']} "
+                    f"(Inspection status: {quality_check.get('inspection_status', 'unknown')})"
+                )
+            
+            # Log warning if inspection pending
+            if quality_check.get("warning"):
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(
+                    f"Operation {operation_id} completed with warning: {quality_check['warning']}"
+                )
+        except ImportError:
+            # Quality module not available, continue without check
+            pass
 
         # Validate status
         if operation.status != OperationStatusEnum.IN_PROGRESS:
@@ -357,6 +401,37 @@ class ShopFloorService:
             await self.db.flush()
             await self.db.commit()
             await self.db.refresh(mo)
+
+        # FIX #1: Automatically update sales order when MO status changes
+        # This ensures delivery dates and SO statuses stay in sync with production
+        if mo.sales_order_id:
+            try:
+                from app.modules.sales.application.services.production_integration_service import (
+                    ProductionIntegrationService,
+                )
+                
+                # Update sales order delivery date and status based on production
+                sales_integration = ProductionIntegrationService(self.db)
+                await sales_integration.update_so_status_from_production(mo.sales_order_id)
+                
+                # Optional: Log successful sync for debugging
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.info(
+                    f"✅ Auto-synced SO {mo.sales_order_id} from MO {mo_id} status change "
+                    f"(new status: {new_status.value if new_status else 'unchanged'})"
+                )
+                
+            except Exception as e:
+                # Log error but don't fail MO status update
+                # MO operations are critical path - SO sync is best-effort
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(
+                    f"Failed to auto-update sales order {mo.sales_order_id} "
+                    f"from MO {mo_id} status change: {e}",
+                    exc_info=True
+                )
 
         return mo
 

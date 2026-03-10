@@ -94,3 +94,4 @@ export const WorkCenterRow: React.FC<WorkCenterRowProps> = ({
     </div>
   );
 };
+

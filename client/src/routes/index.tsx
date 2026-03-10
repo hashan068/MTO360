@@ -6,6 +6,8 @@ import AppLayout from '@/shared/components/layout/AppLayout';
 import { inventoryRoutes } from '@/features/inventory/routes';
 import { salesRoutes } from '@/features/sales/routes';
 import { manufacturingRoutes } from '@/features/manufacturing/routes';
+import { qualityRoutes } from '@/features/quality/routes';
+import { procurementRoutes } from '@/features/procurement';
 
 const DashboardPage = lazy(() => import('@/features/dashboard/pages/DashboardPage'));
 const LoginPage = lazy(() => import('@/features/auth/pages/LoginPage'));
@@ -37,6 +39,14 @@ const routes: RouteObject[] = [
             path: 'manufacturing',
             children: manufacturingRoutes,
           },
+          {
+            path: 'procurement',
+            children: procurementRoutes,
+          },
+          {
+            path: 'quality',
+            children: qualityRoutes,
+          },
         ],
       },
     ],
@@ -54,3 +64,4 @@ const AppRoutes = () => {
 };
 
 export default AppRoutes;
+

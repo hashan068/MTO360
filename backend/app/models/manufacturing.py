@@ -81,12 +81,22 @@ class ManufacturingOrder(Base, TimestampMixin):
     scheduled_end: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)  # Latest operation end
     total_scheduled_duration_minutes: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # Total duration of all operations
     
+    # Quality Management fields
+    quality_status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # pass, fail, pending_inspection
+    final_inspection_result_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("inspection_results.id"), nullable=True)
+    
     # Relationships
     sales_order_item = relationship("SalesOrderItem", back_populates="manufacturing_orders")
     product = relationship("Product", back_populates="manufacturing_orders")
     bom: Mapped[Optional["BillOfMaterial"]] = relationship("BillOfMaterial", back_populates="manufacturing_orders")
     material_requisitions: Mapped[list["MaterialRequisition"]] = relationship("MaterialRequisition", back_populates="manufacturing_order")
     operations: Mapped[list["ManufacturingOrderOperation"]] = relationship("ManufacturingOrderOperation", back_populates="manufacturing_order", cascade="all, delete-orphan")
+    
+    # Quality Management relationships
+    inspection_results: Mapped[list["InspectionResult"]] = relationship("InspectionResult", back_populates="manufacturing_order", foreign_keys="[InspectionResult.manufacturing_order_id]")
+    defects: Mapped[list["Defect"]] = relationship("Defect", back_populates="manufacturing_order", foreign_keys="[Defect.manufacturing_order_id]")
+    ncrs: Mapped[list["NonConformanceReport"]] = relationship("NonConformanceReport", back_populates="manufacturing_order", foreign_keys="[NonConformanceReport.manufacturing_order_id]")
+    quality_holds: Mapped[list["QualityHold"]] = relationship("QualityHold", back_populates="manufacturing_order", foreign_keys="[QualityHold.manufacturing_order_id]")
     
     def __repr__(self):
         return f"<ManufacturingOrder(id={self.id}, status={self.status.value})>"
@@ -261,11 +271,19 @@ class ManufacturingOrderOperation(Base, TimestampMixin):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     blocking_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)  # If status is blocked
     
+    # Quality Management fields
+    inspection_status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # Latest inspection result: pass, fail, conditional
+    quality_hold: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)  # True if operation has quality hold
+    
     # Relationships
     manufacturing_order: Mapped["ManufacturingOrder"] = relationship("ManufacturingOrder", back_populates="operations")
     work_center: Mapped["WorkCenter"] = relationship("WorkCenter", back_populates="mo_operations")
     assigned_operator = relationship("User")  # Assumes User model exists
     route_operation: Mapped[Optional["RouteOperation"]] = relationship("RouteOperation", back_populates="mo_operations")
+    
+    # Quality Management relationships
+    inspection_results: Mapped[list["InspectionResult"]] = relationship("InspectionResult", back_populates="mo_operation", foreign_keys="[InspectionResult.mo_operation_id]")
+    defects: Mapped[list["Defect"]] = relationship("Defect", back_populates="mo_operation", foreign_keys="[Defect.mo_operation_id]")
     
     def __repr__(self):
         return f"<ManufacturingOrderOperation(id={self.id}, mo_id={self.manufacturing_order_id}, sequence={self.sequence}, status={self.status.value})>"

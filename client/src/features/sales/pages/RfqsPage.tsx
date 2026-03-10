@@ -137,7 +137,7 @@ const RfqsPage = () => {
           <Table<RFQ> 
             rowKey="id" 
             columns={columns} 
-            dataSource={rfqs} 
+            dataSource={rfqs || []} 
             loading={isLoading} 
             pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total) => `Total ${total} RFQs` }}
             onRow={(record) => ({
@@ -152,3 +152,5 @@ const RfqsPage = () => {
 };
 
 export default RfqsPage;
+
+

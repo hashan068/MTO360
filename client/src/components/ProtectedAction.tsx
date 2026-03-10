@@ -71,3 +71,4 @@ const ProtectedAction: React.FC<ProtectedActionProps> = ({
 };
 
 export default ProtectedAction;
+

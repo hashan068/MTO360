@@ -129,7 +129,7 @@ export const OperationExecutionModal = ({
       >
         <div className="space-y-4">
           {/* Operation Info */}
-          <Descriptions column={2} bordered size="small">
+          <Descriptions column={2} variant="outlined" size="small">
             <Descriptions.Item label="MO" span={2}>
               {operation.mo_number}
             </Descriptions.Item>
@@ -254,3 +254,4 @@ export const OperationExecutionModal = ({
     </>
   );
 };
+

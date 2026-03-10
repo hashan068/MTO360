@@ -146,11 +146,11 @@ export const LineItemsTable = ({
     <Space direction="vertical" size="middle" style={{ width: '100%' }}>
       <Table<LineItem>
         columns={columns}
-        dataSource={items}
+        dataSource={items || []}
         rowKey={(record) => record.id?.toString() || `temp-${record.product_id}-${record.quantity}`}
         pagination={false}
         size="small"
-        bordered
+        variant="outlined"
       />
       {showTotal && (
         <div style={{ textAlign: 'right', paddingRight: 16 }}>
@@ -162,3 +162,5 @@ export const LineItemsTable = ({
     </Space>
   );
 };
+
+

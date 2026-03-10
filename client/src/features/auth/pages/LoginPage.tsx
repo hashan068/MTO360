@@ -85,12 +85,12 @@ const LoginPage = () => {
           size="large"
         >
           {error && activeTab === 'login' && (
-            <div style={{ 
-              marginBottom: 16, 
-              padding: '12px 16px', 
-              background: '#fff2f0', 
-              border: '1px solid #ffccc7', 
-              borderRadius: '8px', 
+            <div style={{
+              marginBottom: 16,
+              padding: '12px 16px',
+              background: '#fff2f0',
+              border: '1px solid #ffccc7',
+              borderRadius: '8px',
               color: '#cf1322',
               fontSize: '14px',
               lineHeight: '1.5',
@@ -108,6 +108,7 @@ const LoginPage = () => {
             rules={[{ required: true, message: 'Please enter your username' }]}
           >
             <Input
+              id="login-username"
               prefix={<UserOutlined style={{ color: '#bfbfbf' }} />}
               placeholder="Enter your username"
               autoComplete="username"
@@ -119,6 +120,7 @@ const LoginPage = () => {
             rules={[{ required: true, message: 'Please enter your password' }]}
           >
             <Input.Password
+              id="login-password"
               prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
               placeholder="Enter your password"
               autoComplete="current-password"
@@ -189,12 +191,12 @@ const LoginPage = () => {
           size="large"
         >
           {error && activeTab === 'signup' && (
-            <div style={{ 
-              marginBottom: 16, 
-              padding: '12px 16px', 
-              background: '#fff2f0', 
-              border: '1px solid #ffccc7', 
-              borderRadius: '8px', 
+            <div style={{
+              marginBottom: 16,
+              padding: '12px 16px',
+              background: '#fff2f0',
+              border: '1px solid #ffccc7',
+              borderRadius: '8px',
               color: '#cf1322',
               fontSize: '14px',
               lineHeight: '1.5',
@@ -215,6 +217,7 @@ const LoginPage = () => {
             ]}
           >
             <Input
+              id="signup-username"
               prefix={<UserOutlined style={{ color: '#bfbfbf' }} />}
               placeholder="Enter your username"
               autoComplete="username"
@@ -233,6 +236,7 @@ const LoginPage = () => {
             ]}
           >
             <Input.Password
+              id="signup-password"
               prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
               placeholder="Create a password"
               autoComplete="new-password"
@@ -388,3 +392,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

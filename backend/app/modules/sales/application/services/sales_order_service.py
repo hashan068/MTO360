@@ -197,9 +197,9 @@ class SalesOrderService:
                 SalesOrderStatusEnum.CANCELLED,
             ],
             SalesOrderStatusEnum.IN_PRODUCTION: [
-                SalesOrderStatusEnum.READY_FOR_DELIVERY,
+                SalesOrderStatusEnum.READY_TO_SHIP,
             ],
-            SalesOrderStatusEnum.READY_FOR_DELIVERY: [
+            SalesOrderStatusEnum.READY_TO_SHIP: [
                 SalesOrderStatusEnum.DELIVERED,
             ],
             SalesOrderStatusEnum.CANCELLED: [],  # Terminal state
@@ -251,7 +251,7 @@ class SalesOrderService:
             SalesOrderStatusEnum.CONFIRMED,
             SalesOrderStatusEnum.PROCESSING,
             SalesOrderStatusEnum.IN_PRODUCTION,
-            SalesOrderStatusEnum.READY_FOR_DELIVERY,
+            SalesOrderStatusEnum.READY_TO_SHIP,
             SalesOrderStatusEnum.DELIVERED,
             SalesOrderStatusEnum.CANCELLED,
         ]

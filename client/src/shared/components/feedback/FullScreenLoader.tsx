@@ -1,4 +1,4 @@
-import { Flex, Spin } from 'antd';
+import { Spin } from 'antd';
 
 interface FullScreenLoaderProps {
   message?: string;
@@ -11,3 +11,4 @@ const FullScreenLoader = ({ message = 'Loading application...' }: FullScreenLoad
 );
 
 export default FullScreenLoader;
+

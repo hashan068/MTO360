@@ -125,3 +125,4 @@ export const PerformanceMetrics = ({ data, isLoading }: PerformanceMetricsProps)
     </Card>
   );
 };
+

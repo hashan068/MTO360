@@ -121,7 +121,7 @@ const MaterialRequisitionsPage = () => {
         <Table<MaterialRequisition>
           rowKey="id"
           columns={columns}
-          dataSource={requisitions}
+          dataSource={requisitions || []}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
         />
@@ -130,7 +130,7 @@ const MaterialRequisitionsPage = () => {
       <Drawer
         title="Create Material Requisition"
         width={500}
-        destroyOnClose
+        destroyOnHidden
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
@@ -173,7 +173,7 @@ const MaterialRequisitionsPage = () => {
         {selectedItems && selectedItems.length > 0 ? (
           <Table<MaterialRequisitionItem>
             rowKey="id"
-            dataSource={selectedItems}
+            dataSource={selectedItems || []}
             pagination={false}
             size="small"
             columns={[
@@ -191,3 +191,5 @@ const MaterialRequisitionsPage = () => {
 };
 
 export default MaterialRequisitionsPage;
+
+

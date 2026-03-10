@@ -19,3 +19,4 @@ export const inventoryRoutes: RouteObject[] = [
   { path: 'suppliers', element: <SuppliersPage /> },
   { path: 'reports', element: <InventoryReportsPage /> },
 ];
+

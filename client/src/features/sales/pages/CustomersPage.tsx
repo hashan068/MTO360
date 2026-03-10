@@ -145,7 +145,7 @@ const CustomersPage = () => {
         <Table<Customer>
           rowKey="id"
           columns={columns}
-          dataSource={customers}
+          dataSource={customers || []}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
         />
@@ -154,7 +154,7 @@ const CustomersPage = () => {
       <Drawer
         title={drawerMode === 'create' ? 'Add Customer' : `Edit ${editingCustomer?.name}`}
         width={520}
-        destroyOnClose
+        destroyOnHidden
         open={isDrawerOpen}
         onClose={() => {
           setEditingCustomer(null);
@@ -202,3 +202,5 @@ const CustomersPage = () => {
 };
 
 export default CustomersPage;
+
+

@@ -13,6 +13,7 @@ from app.modules.manufacturing.api.work_centers import router as work_centers_ro
 from app.modules.manufacturing.api.operation_routes import router as operation_routes_router
 from app.modules.manufacturing.api.scheduling import router as scheduling_router
 from app.modules.manufacturing.api.shop_floor import router as shop_floor_router
+from app.modules.manufacturing.api.shop_floor_quality import router as shop_floor_quality_router
 from app.modules.manufacturing.api.analytics import router as analytics_router
 
 # Create module router without prefix - preserves all existing paths
@@ -26,5 +27,6 @@ router.include_router(work_centers_router)
 router.include_router(operation_routes_router)
 router.include_router(scheduling_router)
 router.include_router(shop_floor_router)
+router.include_router(shop_floor_quality_router)
 router.include_router(analytics_router)
 

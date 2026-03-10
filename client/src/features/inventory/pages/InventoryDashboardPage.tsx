@@ -120,7 +120,7 @@ const InventoryDashboardPage = () => {
             }
           >
             <List
-              dataSource={lowStock.slice(0, 5)}
+              dataSource={lowStock.slice(0, 5) || []}
               locale={{ emptyText: 'All components are above reorder levels.' }}
               renderItem={(component) => (
                 <List.Item actions={[<span key="quantity">{component.quantity} {component.unit_of_measure}</span>]}> 
@@ -145,7 +145,7 @@ const InventoryDashboardPage = () => {
             <Table<PurchaseRequisition>
               rowKey="id"
               columns={columns}
-              dataSource={requisitions.slice(0, 6)}
+              dataSource={requisitions.slice(0, 6) || []}
               size="small"
               pagination={false}
             />
@@ -157,3 +157,5 @@ const InventoryDashboardPage = () => {
 };
 
 export default InventoryDashboardPage;
+
+

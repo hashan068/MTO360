@@ -13,3 +13,4 @@ export const ShopFloorPage = () => {
 };
 
 export default ShopFloorPage;
+

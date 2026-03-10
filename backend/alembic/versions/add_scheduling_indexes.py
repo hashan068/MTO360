@@ -10,7 +10,7 @@ from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = 'add_scheduling_indexes'
-down_revision = 'add_production_scheduling'
+down_revision = 'add_quality_mgmt'
 branch_labels = None
 depends_on = None
 
@@ -22,8 +22,7 @@ def upgrade():
     op.create_index(
         'idx_mo_ops_wc_scheduled',
         'manufacturing_order_operations',
-        ['work_center_id', 'scheduled_start', 'scheduled_end'],
-        postgresql_where="status IN ('scheduled', 'in_progress')"
+        ['work_center_id', 'scheduled_start', 'scheduled_end']
     )
     
     op.create_index(
@@ -35,15 +34,13 @@ def upgrade():
     op.create_index(
         'idx_mo_ops_operator',
         'manufacturing_order_operations',
-        ['assigned_operator_id'],
-        postgresql_where="status IN ('scheduled', 'in_progress')"
+        ['assigned_operator_id']
     )
     
     op.create_index(
         'idx_mo_ops_completed',
         'manufacturing_order_operations',
-        ['status', 'actual_end'],
-        postgresql_where="status = 'completed'"
+        ['status', 'actual_end']
     )
     
     op.create_index(
@@ -68,8 +65,7 @@ def upgrade():
     op.create_index(
         'idx_mo_completed',
         'manufacturing_orders',
-        ['status', 'product_id', 'end_at'],
-        postgresql_where="status = 'completed'"
+        ['status', 'product_id', 'end_at']
     )
     
     # Additional useful indexes

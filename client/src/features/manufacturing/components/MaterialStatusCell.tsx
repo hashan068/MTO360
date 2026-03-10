@@ -28,3 +28,4 @@ const MaterialStatusCell: React.FC<MaterialStatusCellProps> = ({ moId }) => {
 };
 
 export default MaterialStatusCell;
+

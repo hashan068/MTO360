@@ -94,7 +94,14 @@ const SalesOrderDetailPage = () => {
       <DocumentBreadcrumb
         rfq={salesOrder.rfq_reference}
         quotation={salesOrder.quotation_reference}
-        salesOrder={{ id: salesOrder.id, status: salesOrder.status, customer_id: salesOrder.customer_id, total_amount: salesOrder.total_amount }}
+        salesOrder={{
+          id: salesOrder.id,
+          status: salesOrder.status,
+          customer_id: salesOrder.customer_id,
+          customer_name: salesOrder.customer_name,
+          total_amount: salesOrder.total_amount,
+          created_at: salesOrder.created_at_date || ''
+        }}
         currentPage="sales_order"
       />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -120,7 +127,7 @@ const SalesOrderDetailPage = () => {
       </div>
 
       <Card title="Order Information">
-        <Descriptions column={2} bordered>
+        <Descriptions column={2} variant="outlined">
           <Descriptions.Item label="Order ID">SO-{salesOrder.id}</Descriptions.Item>
           <Descriptions.Item label="Status">
             <Space>
@@ -184,3 +191,4 @@ const SalesOrderDetailPage = () => {
 };
 
 export default SalesOrderDetailPage;
+

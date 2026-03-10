@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { X, CheckCheck, AlertCircle, Info, AlertTriangle } from 'lucide-react';
+import { X, CheckCheck, AlertCircle, Info, AlertTriangle, Bell } from 'lucide-react';
 import { useNotifications, Notification } from '../hooks/useNotifications';
 import { useNavigate } from 'react-router-dom';
 
@@ -139,3 +139,4 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
 };
 
 export default NotificationPanel;
+

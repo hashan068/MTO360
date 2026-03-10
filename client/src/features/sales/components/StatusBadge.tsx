@@ -76,3 +76,4 @@ export const StatusBadge = ({ status, isExpired = false }: StatusBadgeProps) => 
     </Tag>
   );
 };
+

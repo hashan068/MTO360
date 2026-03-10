@@ -189,7 +189,7 @@ const QuotationDetailPage = () => {
 
       {/* Quotation Details */}
       <Card title="Quotation Information">
-        <Descriptions column={2} bordered>
+        <Descriptions column={2} variant="outlined">
           <Descriptions.Item label="Quotation ID">#{quotation.id}</Descriptions.Item>
           <Descriptions.Item label="Status">
             <Space>
@@ -305,3 +305,4 @@ const QuotationDetailPage = () => {
 };
 
 export default QuotationDetailPage;
+

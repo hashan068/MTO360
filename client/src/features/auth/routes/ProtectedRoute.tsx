@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Flex, Spin } from 'antd';
+import { Spin } from 'antd';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 const ProtectedRoute = () => {
@@ -32,3 +32,4 @@ const ProtectedRoute = () => {
 };
 
 export default ProtectedRoute;
+

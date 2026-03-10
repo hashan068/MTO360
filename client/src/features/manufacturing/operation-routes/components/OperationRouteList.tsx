@@ -204,7 +204,7 @@ export const OperationRouteList = () => {
 
         <Table
           columns={columns}
-          dataSource={filteredData}
+          dataSource={filteredData || []}
           rowKey="id"
           loading={isLoading}
           pagination={{
@@ -226,3 +226,5 @@ export const OperationRouteList = () => {
     </Card>
   );
 };
+
+

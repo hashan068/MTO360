@@ -56,3 +56,4 @@ export const DocumentBreadcrumb = ({ rfq, quotation, salesOrder, currentPage }: 
 
   return <Breadcrumb items={items} style={{ marginBottom: 16 }} />;
 };
+

@@ -201,7 +201,7 @@ const QuotationsPage = () => {
           <Table<Quotation>
             rowKey="id"
             columns={columns}
-            dataSource={quotations}
+            dataSource={quotations || []}
             loading={isLoading}
             pagination={{ pageSize: 10 }}
             onRow={(record) => ({
@@ -216,3 +216,5 @@ const QuotationsPage = () => {
 };
 
 export default QuotationsPage;
+
+

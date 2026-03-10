@@ -137,7 +137,7 @@ const ComponentsPage = () => {
           rowKey="id"
           loading={isLoading}
           columns={columns}
-          dataSource={components}
+          dataSource={components || []}
           pagination={{ pageSize: 10 }}
           rowClassName={(record) => (lowStockIds.has(record.id) ? 'bg-red-50/60' : '')}
         />
@@ -146,7 +146,7 @@ const ComponentsPage = () => {
       <Drawer
         width={420}
         title={selectedComponent?.name}
-        destroyOnClose
+        destroyOnHidden
         onClose={() => setSelectedComponent(null)}
         open={Boolean(selectedComponent)}
       >
@@ -183,3 +183,5 @@ const ComponentsPage = () => {
 };
 
 export default ComponentsPage;
+
+

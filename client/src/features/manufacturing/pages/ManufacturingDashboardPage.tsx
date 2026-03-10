@@ -97,7 +97,7 @@ const ManufacturingDashboardPage = () => {
             extra={<Typography.Link onClick={() => navigate('/manufacturing/orders')}>View all</Typography.Link>}
           >
             <List
-              dataSource={manufacturingOrders.slice(0, 6)}
+              dataSource={manufacturingOrders.slice(0, 6) || []}
               renderItem={(order) => (
                 <List.Item actions={[<span key="qty">Qty {order.quantity}</span>]}> 
                   <List.Item.Meta
@@ -117,7 +117,7 @@ const ManufacturingDashboardPage = () => {
             <Table<MaterialRequisition>
               rowKey="id"
               columns={requisitionsColumns}
-              dataSource={materialRequisitions.slice(0, 6)}
+              dataSource={materialRequisitions.slice(0, 6) || []}
               size="small"
               pagination={false}
             />
@@ -132,7 +132,7 @@ const ManufacturingDashboardPage = () => {
             extra={<Typography.Link onClick={() => navigate('/manufacturing/boms')}>BOM catalog</Typography.Link>}
           >
             <List
-              dataSource={boms.slice(0, 6)}
+              dataSource={boms.slice(0, 6) || []}
               renderItem={(bom) => (
                 <List.Item actions={[<span key="items">{bom.bom_items.length} items</span>]}> 
                   <List.Item.Meta
@@ -150,3 +150,5 @@ const ManufacturingDashboardPage = () => {
 };
 
 export default ManufacturingDashboardPage;
+
+

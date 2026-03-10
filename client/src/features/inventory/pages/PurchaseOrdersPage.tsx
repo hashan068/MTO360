@@ -108,7 +108,7 @@ const PurchaseOrdersPage = () => {
         <Table<PurchaseOrder>
           rowKey="id"
           columns={columns}
-          dataSource={purchaseOrders}
+          dataSource={purchaseOrders || []}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
         />
@@ -117,7 +117,7 @@ const PurchaseOrdersPage = () => {
       <Drawer
         title="Create Purchase Order"
         width={520}
-        destroyOnClose
+        destroyOnHidden
         onClose={() => setDrawerOpen(false)}
         open={isDrawerOpen}
       >
@@ -177,3 +177,5 @@ const PurchaseOrdersPage = () => {
 };
 
 export default PurchaseOrdersPage;
+
+

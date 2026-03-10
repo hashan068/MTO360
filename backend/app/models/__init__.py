@@ -45,10 +45,33 @@ from app.models.notifications import (
     Notification,
 )
 
+from app.models.quality import (
+    InspectionPoint,
+    InspectionResult,
+    Defect,
+    NonConformanceReport,
+    ReworkOperation,
+    CorrectiveAction,
+    QualityHold,
+)
+
 from app.models.permissions import (
     Permission,
     Role,
 )
+
+from app.models.procurement import (
+    SupplierPerformance,
+    ProcurementRFQ,
+    SupplierQuote,
+    SupplierContract,
+    ContractPricing,
+    ComponentInventoryPolicy,
+    DemandForecast,
+    ComponentPriceHistory,
+    ProcurementBudget,
+)
+
 
 __all__ = [
     "Base",
@@ -83,8 +106,27 @@ __all__ = [
     "WorkCenterSchedule",
     # Notifications
     "Notification",
+    # Quality Management
+    "InspectionPoint",
+    "InspectionResult",
+    "Defect",
+    "NonConformanceReport",
+    "ReworkOperation",
+    "CorrectiveAction",
+    "QualityHold",
     # Permissions
     "Permission",
     "Role",
+    # Procurement
+    "SupplierPerformance",
+    "ProcurementRFQ",
+    "SupplierQuote",
+    "SupplierContract",
+    "ContractPricing",
+    "ComponentInventoryPolicy",
+    "DemandForecast",
+    "ComponentPriceHistory",
+    "ProcurementBudget",
 ]
+
 

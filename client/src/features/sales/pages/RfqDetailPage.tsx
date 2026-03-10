@@ -128,7 +128,7 @@ const RfqDetailPage = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <DocumentBreadcrumb
-        rfq={{ id: rfq.id, status: rfq.status }}
+        rfq={rfq}
         currentPage="rfq"
       />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -147,8 +147,8 @@ const RfqDetailPage = () => {
             </Button>
           )}
           {!isEditing && (
-            <Button 
-              icon={<EditOutlined />} 
+            <Button
+              icon={<EditOutlined />}
               onClick={() => setIsEditing(true)}
               disabled={!canEdit}
               title={!canEdit ? `Cannot edit RFQ with status "${rfq.status}"` : undefined}
@@ -184,7 +184,7 @@ const RfqDetailPage = () => {
       ) : (
         <>
           <Card title="RFQ Information">
-            <Descriptions column={2} bordered>
+            <Descriptions column={2} variant="outlined">
               <Descriptions.Item label="RFQ #">{rfq.id}</Descriptions.Item>
               <Descriptions.Item label="Status">
                 <StatusBadge status={rfq.status} />
@@ -221,7 +221,7 @@ const RfqDetailPage = () => {
               <Table<QuotationSummary>
                 rowKey="id"
                 columns={quotationColumns}
-                dataSource={quotations}
+                dataSource={quotations || []}
                 pagination={false}
                 size="small"
               />
@@ -245,3 +245,5 @@ const RfqDetailPage = () => {
 };
 
 export default RfqDetailPage;
+
+

@@ -13,3 +13,4 @@ export const WorkCentersPage = () => {
 };
 
 export default WorkCentersPage;
+

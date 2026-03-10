@@ -170,7 +170,7 @@ export const RouteOperationsList = ({ routeId }: RouteOperationsListProps) => {
 
       <Table
         columns={columns}
-        dataSource={operations}
+        dataSource={operations || []}
         rowKey="id"
         loading={isLoading}
         pagination={false}
@@ -258,3 +258,5 @@ export const RouteOperationsList = ({ routeId }: RouteOperationsListProps) => {
     </div>
   );
 };
+
+

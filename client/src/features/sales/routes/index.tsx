@@ -26,3 +26,4 @@ export const salesRoutes: RouteObject[] = [
   { path: 'orders', element: <SalesOrdersPage /> },
   { path: 'orders/:id', element: <SalesOrderDetailPage /> },
 ];
+

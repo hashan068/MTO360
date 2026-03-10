@@ -130,3 +130,4 @@ export const CycleTimeChart = ({ data, isLoading }: CycleTimeChartProps) => {
     </Card>
   );
 };
+

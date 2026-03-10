@@ -170,7 +170,7 @@ const ManufacturingOrdersPage = () => {
         <Table<ManufacturingOrder>
           rowKey="id"
           columns={columns}
-          dataSource={orders}
+          dataSource={orders || []}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
         />
@@ -179,7 +179,7 @@ const ManufacturingOrdersPage = () => {
       <Drawer
         title="Create Manufacturing Order"
         width={520}
-        destroyOnClose
+        destroyOnHidden
         open={isDrawerOpen}
         onClose={() => setDrawerOpen(false)}
       >
@@ -218,3 +218,5 @@ const ManufacturingOrdersPage = () => {
 };
 
 export default ManufacturingOrdersPage;
+
+

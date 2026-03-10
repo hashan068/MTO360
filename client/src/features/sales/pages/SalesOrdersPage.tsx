@@ -143,7 +143,7 @@ const SalesOrdersPage = () => {
           <Table<SalesOrder>
             rowKey="id"
             columns={columns}
-            dataSource={salesOrders}
+            dataSource={salesOrders || []}
             loading={isLoading}
             pagination={{ pageSize: 10 }}
             onRow={(record) => ({
@@ -158,3 +158,5 @@ const SalesOrdersPage = () => {
 };
 
 export default SalesOrdersPage;
+
+

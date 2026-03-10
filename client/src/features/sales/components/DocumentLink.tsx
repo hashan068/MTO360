@@ -33,3 +33,4 @@ export const DocumentLink = ({ type, id, label }: DocumentLinkProps) => {
     </Link>
   );
 };
+

@@ -160,7 +160,7 @@ export const WorkCenterList = () => {
 
         <Table
           columns={columns}
-          dataSource={filteredData}
+          dataSource={filteredData || []}
           rowKey="id"
           loading={isLoading}
           pagination={{
@@ -179,3 +179,5 @@ export const WorkCenterList = () => {
     </Card>
   );
 };
+
+

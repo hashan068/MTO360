@@ -150,7 +150,7 @@ const ProductsPage = () => {
       <Card>
         <Table<Product>
           rowKey="id"
-          dataSource={products}
+          dataSource={products || []}
           columns={columns}
           loading={isLoading}
           pagination={{ pageSize: 10 }}
@@ -160,7 +160,7 @@ const ProductsPage = () => {
       <Drawer
         title={drawerMode === 'create' ? 'Add Product' : `Edit ${editingProduct?.product_name ?? 'Product'}`}
         width={580}
-        destroyOnClose
+        destroyOnHidden
         open={isDrawerOpen}
         onClose={() => {
           setEditingProduct(null);
@@ -241,3 +241,5 @@ const ProductsPage = () => {
 };
 
 export default ProductsPage;
+
+

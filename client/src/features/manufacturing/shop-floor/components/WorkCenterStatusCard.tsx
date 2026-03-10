@@ -83,3 +83,4 @@ export const WorkCenterStatusCard = ({ workCenter }: WorkCenterStatusCardProps) 
     </Card>
   );
 };
+
