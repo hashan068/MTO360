@@ -1,6 +1,5 @@
-import { Card, Button, List, Typography, Empty } from 'antd';
+import { Card, Button, List, Empty } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
-import type { InspectionPoint } from '../types';
 
 interface InspectionQueueCardProps {
   pendingInspections: any[]; // TODO: Define PendingInspection type

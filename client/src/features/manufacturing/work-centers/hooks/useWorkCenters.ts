@@ -4,7 +4,7 @@
  */
 import { useQuery, useMutation, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
 import { message } from 'antd';
-import { manufacturingApi } from '../api/manufacturingApi';
+import { manufacturingApi } from '../../api/manufacturingApi';
 import type { WorkCenter, WorkCenterCreate, WorkCenterUpdate } from '@/types/manufacturing';
 
 // Query Keys

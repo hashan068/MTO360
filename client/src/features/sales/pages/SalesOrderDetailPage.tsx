@@ -127,7 +127,7 @@ const SalesOrderDetailPage = () => {
       </div>
 
       <Card title="Order Information">
-        <Descriptions column={2} variant="outlined">
+        <Descriptions column={2}>
           <Descriptions.Item label="Order ID">SO-{salesOrder.id}</Descriptions.Item>
           <Descriptions.Item label="Status">
             <Space>

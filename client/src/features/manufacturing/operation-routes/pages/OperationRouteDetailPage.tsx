@@ -62,7 +62,7 @@ export const OperationRouteDetailPage = () => {
           </Space>
         }
       >
-        <Descriptions column={2} variant="outlined" size="small" className="mb-6">
+        <Descriptions column={2} size="small" className="mb-6">
           <Descriptions.Item label="Route Name">{route.name}</Descriptions.Item>
           <Descriptions.Item label="Status">
             <Tag color={route.is_active ? 'success' : 'default'}>

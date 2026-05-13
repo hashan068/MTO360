@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Button, message, Select } from 'antd';
+import { Modal, Form, Input, Button, message } from 'antd';
 import { useCreateCAPA } from '../hooks/useCAPAs';
 
 interface CAPAFormProps {

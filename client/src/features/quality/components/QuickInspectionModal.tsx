@@ -1,8 +1,6 @@
 import { Modal, Form, Select, Radio, Input, Upload, Button, message } from 'antd';
-import { UploadOutlined, CameraOutlined } from '@ant-design/icons';
+import { CameraOutlined } from '@ant-design/icons';
 import { useRecordInspection } from '../hooks/useInspections';
-import type { InspectionResult } from '../types';
-
 interface QuickInspectionModalProps {
   visible: boolean;
   onClose: () => void;

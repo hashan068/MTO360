@@ -184,7 +184,7 @@ const RfqDetailPage = () => {
       ) : (
         <>
           <Card title="RFQ Information">
-            <Descriptions column={2} variant="outlined">
+            <Descriptions column={2}>
               <Descriptions.Item label="RFQ #">{rfq.id}</Descriptions.Item>
               <Descriptions.Item label="Status">
                 <StatusBadge status={rfq.status} />

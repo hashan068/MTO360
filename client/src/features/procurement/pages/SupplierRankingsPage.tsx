@@ -2,7 +2,7 @@
  * Supplier Rankings Page - Phase 1: Supplier Performance
  */
 import { TrophyOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Card, Table, Typography, Button, Space, Progress, Statistic, Row, Col } from 'antd';
+import { Card, Table, Typography, Button, Progress, Statistic, Row, Col } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -13,7 +13,7 @@ import { formatCurrency } from '@/shared/utils/format';
 
 const SupplierRankingsPage = () => {
   const navigate = useNavigate();
-  const [limit, setLimit] = useState(20);
+  const [limit] = useState(20);
 
   const {
     data: rankings = [],

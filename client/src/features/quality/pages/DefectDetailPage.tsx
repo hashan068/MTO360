@@ -1,14 +1,13 @@
-import { useParams, useNavigate } from 'antd'; // Note: useParams is from react-router-dom, fixing import below
-import { Card, Descriptions, Button, Tag, Divider, Spin, Alert, Space, Typography } from 'antd';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, Descriptions, Button, Divider, Spin, Alert, Typography } from 'antd';
 import { ArrowLeftOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useDefect, useCloseDefect } from '../hooks/useDefects';
 import { QualityStatusBadge } from '../components/QualityStatusBadge';
-import { useParams as useRouterParams, useNavigate as useRouterNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 const DefectDetailPage = () => {
-  const { id } = useRouterParams<{ id: string }>();
-  const navigate = useRouterNavigate();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { data: defect, isLoading, isError } = useDefect(Number(id));
   const closeDefect = useCloseDefect();
 

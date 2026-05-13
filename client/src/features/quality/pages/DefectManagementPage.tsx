@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, Button, Tag, Space, Typography, Input } from 'antd';
+import { Table, Button, Typography, Input } from 'antd';
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useDefects } from '../hooks/useDefects';

@@ -5,7 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { message } from 'antd';
 import { manufacturingApi } from '../../api/manufacturingApi';
-import type { ManufacturingOrderOperation, CapacityData } from '@/types/manufacturing';
+import type { ManufacturingOrderOperation } from '@/types/manufacturing';
 
 export const schedulerKeys = {
   operations: (filters?: any) => ['scheduler', 'operations', filters] as const,
@@ -73,7 +73,7 @@ export const useRescheduleOperation = () => {
 
       return { previousOperations };
     },
-    onError: (err, variables, context: any) => {
+    onError: (_err, _variables, context: any) => {
       // Rollback on error
       queryClient.setQueryData(schedulerKeys.operations(), context.previousOperations);
       message.error('Failed to reschedule operation');

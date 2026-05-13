@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, Descriptions, Button, Steps, Divider, Spin, Alert, Typography, Modal, Form, Input, Checkbox, Table } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useCAPA, useVerifyCAPA, useCloseCAPA } from '../hooks/useCAPAs';
+import { useCAPA, useVerifyCAPA } from '../hooks/useCAPAs';
 import { QualityStatusBadge } from '../components/QualityStatusBadge';
 import dayjs from 'dayjs';
 
@@ -14,7 +14,6 @@ const CAPADetailPage = () => {
   const { data: capa, isLoading, isError } = useCAPA(Number(id));
 
   const verifyCAPA = useVerifyCAPA();
-  const closeCAPA = useCloseCAPA();
 
   const [verificationModalVisible, setVerificationModalVisible] = useState(false);
 

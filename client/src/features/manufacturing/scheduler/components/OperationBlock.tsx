@@ -3,7 +3,7 @@
  * Visual representation of a scheduled operation in timeline
  */
 import React from 'react';
-import { Tooltip, Tag } from 'antd';
+import { Tooltip } from 'antd';
 import type { ManufacturingOrderOperation } from '@/types/manufacturing';
 import { getOperationStatusColor, durationToPixels, datetimeToPixel, type TimelineConfig } from '../utils/schedulerUtils';
 import dayjs from 'dayjs';
@@ -37,7 +37,6 @@ export const OperationBlock: React.FC<OperationBlockProps> = ({
     onDragStart?.(operation, e);
   };
 
-  const actualDuration = operation.actual_duration_minutes || operation.scheduled_duration_minutes;
   const variance = operation.actual_duration_minutes
     ? operation.actual_duration_minutes - operation.scheduled_duration_minutes
     : 0;

@@ -5,7 +5,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { message } from 'antd';
 import { manufacturingApi } from '../../api/manufacturingApi';
-import type { ManufacturingOrderOperation, WorkCenterQueueItem, DashboardMetrics } from '@/types/manufacturing';
 
 export const shopFloorKeys = {
   dashboard: (workCenterId?: number) => ['shopFloor', 'dashboard', workCenterId] as const,

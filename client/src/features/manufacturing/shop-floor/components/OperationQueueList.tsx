@@ -3,13 +3,7 @@
  * Displays list of operations in work center queue
  */
 import { useState } from 'react';
-import { Table, Tag, Button, Space, Modal, Input } from 'antd';
-import {
-  PlayCircleOutlined,
-  CheckCircleOutlined,
-  PauseCircleOutlined,
-  StopOutlined,
-} from '@ant-design/icons';
+import { Table, Tag, Button } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useWorkCenterQueue } from '../hooks/useShopFloor';
 import { OperationExecutionModal } from './OperationExecutionModal';

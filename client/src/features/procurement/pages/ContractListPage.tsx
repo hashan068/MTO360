@@ -60,7 +60,7 @@ const ContractListPage = () => {
       dataIndex: 'end_date',
       key: 'end_date',
       width: 140,
-      render: (value, record) => {
+      render: (value) => {
         const endDate = dayjs(value);
         const daysUntilExpiry = endDate.diff(dayjs(), 'day');
         const isExpiringSoon = daysUntilExpiry > 0 && daysUntilExpiry <= 90;

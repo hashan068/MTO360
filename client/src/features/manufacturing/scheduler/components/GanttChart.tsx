@@ -4,7 +4,7 @@
  */
 import React, { useMemo } from 'react';
 import { Spin } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import type { ManufacturingOrderOperation, WorkCenter } from '@/types/manufacturing';
 import { WorkCenterRow } from './WorkCenterRow';
 import {

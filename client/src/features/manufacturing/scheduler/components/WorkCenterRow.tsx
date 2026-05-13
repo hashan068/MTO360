@@ -7,7 +7,7 @@ import { Tag } from 'antd';
 import type { ManufacturingOrderOperation, WorkCenter } from '@/types/manufacturing';
 import { OperationBlock } from './OperationBlock';
 import type { TimelineConfig } from '../utils/schedulerUtils';
-import { datetimeToPixel, pixelToDatetime, snapToHour } from '../utils/schedulerUtils';
+import { pixelToDatetime, snapToHour } from '../utils/schedulerUtils';
 
 interface WorkCenterRowProps {
   workCenter: WorkCenter;

@@ -3,7 +3,7 @@
  * Modal form for creating/editing work centers
  */
 import { useEffect } from 'react';
-import { Modal, Form, Input, InputNumber, Switch, message } from 'antd';
+import { Modal, Form, Input, InputNumber, Switch } from 'antd';
 import { useCreateWorkCenter, useUpdateWorkCenter, useWorkCenter } from '../hooks/useWorkCenters';
 import type { WorkCenterCreate } from '@/types/manufacturing';
 
@@ -17,7 +17,7 @@ export const WorkCenterForm = ({ open, editingId, onClose }: WorkCenterFormProps
   const [form] = Form.useForm<WorkCenterCreate>();
   const isEditing = !!editingId;
 
-  const { data: workCenter, isLoading: isLoadingWorkCenter } = useWorkCenter(editingId!);
+  const { data: workCenter } = useWorkCenter(editingId!);
   const createMutation = useCreateWorkCenter();
   const updateMutation = useUpdateWorkCenter();
 

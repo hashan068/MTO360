@@ -1,7 +1,4 @@
-version: '3.8'
-
 services:
-  # PostgreSQL database for MTO360
   postgres:
     image: postgres:13-alpine
     container_name: mto360_postgres_db
@@ -24,32 +21,49 @@ services:
     networks:
       - mto360_internal_net
 
-  # Redis for caching and session management (optional but useful)
-  redis:
-    image: redis:7-alpine
-    container_name: mto360_redis_cache
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: mto360_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://mto360_user:mto360_secure_pass_2024@postgres:5432/mto360_production
+      SECRET_KEY: change-this-in-production-use-at-least-32-random-chars
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      REFRESH_TOKEN_EXPIRE_DAYS: 7
+      CORS_ORIGINS: "http://localhost:38080"
+      DEBUG: "false"
+      TIMEZONE: Asia/Colombo
+    ports:
+      - "38100:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mto360_internal_net
+
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+    container_name: mto360_frontend
     restart: unless-stopped
     ports:
-      - "29384:6379"
-    volumes:
-      - mto360_redis_storage:/data
-    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - "38080:80"
+    depends_on:
+      - backend
     networks:
       - mto360_internal_net
 
 volumes:
   mto360_postgres_storage:
     driver: local
-  mto360_redis_storage:
-    driver: local
 
 networks:
   mto360_internal_net:
     driver: bridge
     name: mto360_internal_net
-

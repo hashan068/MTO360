@@ -71,7 +71,7 @@ const BudgetTrackingPage = () => {
       dataIndex: 'consumed_pct',
       key: 'consumed_pct',
       width: 180,
-      render: (pct = 0, record) => {
+      render: (pct = 0) => {
         const status = pct >= 100 ? 'exception' : pct >= 90 ? 'active' : 'normal';
         return (
           <Space direction="vertical" size={0} style={{ width: '100%' }}>

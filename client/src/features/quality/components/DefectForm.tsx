@@ -1,7 +1,5 @@
 import { Modal, Form, Input, Select, InputNumber, Button, message } from 'antd';
 import { useCreateDefect } from '../hooks/useDefects';
-import type { DefectSeverity } from '../types';
-
 interface DefectFormProps {
   visible: boolean;
   onClose: () => void;

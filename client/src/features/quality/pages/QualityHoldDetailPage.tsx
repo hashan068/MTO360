@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, Descriptions, Button, Divider, Spin, Alert, Typography, Modal, Form, Input } from 'antd';
 import { ArrowLeftOutlined, UnlockOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useQualityHolds, useReleaseHold } from '../hooks/useQualityMetrics'; // Using existing hook, might need specific getHold
+import { useReleaseHold } from '../hooks/useQualityMetrics'; // Using existing hook, might need specific getHold
 import { QualityStatusBadge } from '../components/QualityStatusBadge';
 import dayjs from 'dayjs';
 

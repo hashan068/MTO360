@@ -2,8 +2,8 @@
  * Operation Execution Modal Component
  * Modal for executing operations (start, complete, pause, block)
  */
-import { useState, useEffect } from 'react';
-import { Modal, Descriptions, Button, Space, Input, Form, message, Tag, Statistic } from 'antd';
+import { useState } from 'react';
+import { Modal, Descriptions, Button, Space, Input, Form, Tag, Statistic } from 'antd';
 import {
   PlayCircleOutlined,
   CheckCircleOutlined,
@@ -19,6 +19,7 @@ import {
 } from '../hooks/useShopFloor';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
+import type { OperationStatus } from '@/types/manufacturing';
 
 dayjs.extend(duration);
 
@@ -49,7 +50,7 @@ export const OperationExecutionModal = ({
     name: 'PCB Assembly',
     mo_number: 'MO-2025-001',
     sequence: 1,
-    status: 'scheduled' as const,
+    status: 'scheduled' as OperationStatus,
     scheduled_start: '2025-01-15T08:00:00',
     scheduled_duration_minutes: 45,
     actual_start: null as string | null,
@@ -129,7 +130,7 @@ export const OperationExecutionModal = ({
       >
         <div className="space-y-4">
           {/* Operation Info */}
-          <Descriptions column={2} variant="outlined" size="small">
+          <Descriptions column={2} size="small">
             <Descriptions.Item label="MO" span={2}>
               {operation.mo_number}
             </Descriptions.Item>

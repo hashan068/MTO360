@@ -150,7 +150,6 @@ export const LineItemsTable = ({
         rowKey={(record) => record.id?.toString() || `temp-${record.product_id}-${record.quantity}`}
         pagination={false}
         size="small"
-        variant="outlined"
       />
       {showTotal && (
         <div style={{ textAlign: 'right', paddingRight: 16 }}>

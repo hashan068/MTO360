@@ -24,33 +24,36 @@ export const DocumentBreadcrumb = ({ rfq, quotation, salesOrder, currentPage }: 
   // Add RFQ breadcrumb if available
   if (rfq) {
     items.push({
-      title: currentPage === 'rfq' ? (
-        `RFQ #${rfq.id}`
-      ) : (
-        <Link to={`/sales/rfqs/${rfq.id}`}>RFQ #{rfq.id}</Link>
-      ),
+      title:
+        currentPage === 'rfq' ? (
+          <span>{`RFQ #${rfq.id}`}</span>
+        ) : (
+          <Link to={`/sales/rfqs/${rfq.id}`}>RFQ #{rfq.id}</Link>
+        ),
     });
   }
 
   // Add Quotation breadcrumb if available
   if (quotation) {
     items.push({
-      title: currentPage === 'quotation' ? (
-        `Quotation #${quotation.id}`
-      ) : (
-        <Link to={`/sales/quotations/${quotation.id}`}>Quotation #{quotation.id}</Link>
-      ),
+      title:
+        currentPage === 'quotation' ? (
+          <span>{`Quotation #${quotation.id}`}</span>
+        ) : (
+          <Link to={`/sales/quotations/${quotation.id}`}>Quotation #{quotation.id}</Link>
+        ),
     });
   }
 
   // Add Sales Order breadcrumb if available
   if (salesOrder) {
     items.push({
-      title: currentPage === 'sales_order' ? (
-        `Sales Order #${salesOrder.id}`
-      ) : (
-        <Link to={`/sales/orders/${salesOrder.id}`}>Sales Order #{salesOrder.id}</Link>
-      ),
+      title:
+        currentPage === 'sales_order' ? (
+          <span>{`Sales Order #${salesOrder.id}`}</span>
+        ) : (
+          <Link to={`/sales/orders/${salesOrder.id}`}>Sales Order #{salesOrder.id}</Link>
+        ),
     });
   }
 

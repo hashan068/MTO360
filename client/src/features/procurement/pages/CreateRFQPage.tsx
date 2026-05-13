@@ -1,7 +1,7 @@
 /**
  * Create RFQ Page - Phase 2: RFQ & Competitive Bidding
  */
-import { SaveOutlined, SendOutlined } from '@ant-design/icons';
+import { SaveOutlined } from '@ant-design/icons';
 import {
   Card,
   Form,
@@ -179,7 +179,9 @@ const CreateRFQPage = () => {
               dataSource={supplierTransferData}
               titles={['Available Suppliers', 'Selected Suppliers']}
               targetKeys={selectedSuppliers.map(id => id.toString())}
-              onChange={(keys) => setSelectedSuppliers(keys.map(k => parseInt(k)))}
+              onChange={(keys) =>
+                setSelectedSuppliers(keys.map((k) => parseInt(String(k), 10)))
+              }
               render={(item) => item.title}
               listStyle={{ width: 300, height: 400 }}
               showSearch

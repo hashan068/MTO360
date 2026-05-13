@@ -1,6 +1,5 @@
 import { Table, Button, Typography } from 'antd';
 import { Link } from 'react-router-dom';
-import { QualityStatusBadge } from './QualityStatusBadge';
 import { QualityHoldBadge } from './QualityHoldBadge';
 import type { QualityHold } from '../types';
 import dayjs from 'dayjs';

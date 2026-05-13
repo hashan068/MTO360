@@ -1,7 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { qualityApi } from '../api/qualityApi';
-import type { CAPA } from '../types';
-
 export const useCAPAs = (filters?: {
   status?: string;
   owner_id?: number;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, Descriptions, Button, Steps, Divider, Spin, Alert, Typography, Modal, Form, Input, Select, InputNumber } from 'antd';
-import { ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useNCR, useStartInvestigation, useApproveNCR, useCloseNCR } from '../hooks/useNCRs';
 import { QualityStatusBadge } from '../components/QualityStatusBadge';
@@ -19,7 +19,6 @@ const NCRDetailPage = () => {
 
   const [investigationModalVisible, setInvestigationModalVisible] = useState(false);
   const [approvalModalVisible, setApprovalModalVisible] = useState(false);
-  const [form] = Form.useForm();
 
   if (isLoading) return <Spin className="flex justify-center p-12" />;
   if (isError || !ncr) return <Alert message="NCR not found" type="error" />;
