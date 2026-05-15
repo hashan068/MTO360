@@ -8,11 +8,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 from app.models.procurement import (
-    ProcurementRFQ, SupplierQuote, 
+    ProcurementRFQ, SupplierQuote,
     RFQStatusEnum, QuoteStatusEnum,
-    PurchaseOrderStatusEnum
 )
-from app.models.inventory import PurchaseOrder, Supplier, Component
+from app.models.inventory import PurchaseOrder, Supplier, Component, PurchaseOrderStatusEnum
 from app.modules.procurement.infra.repositories.rfq_repo import RFQRepository
 from app.modules.procurement.infra.repositories.supplier_quote_repo import SupplierQuoteRepository
 

@@ -19,14 +19,25 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 
+def _create_enum_if_missing(name: str, values: tuple[str, ...]) -> None:
+    quoted = ", ".join(f"'{v}'" for v in values)
+    op.execute(
+        f"""
+        DO $$ BEGIN
+            CREATE TYPE {name} AS ENUM ({quoted});
+        EXCEPTION WHEN duplicate_object THEN null;
+        END $$;
+        """
+    )
+
+
 def upgrade() -> None:
-    # Create Enums
-    op.execute("CREATE TYPE rfqstatusenum AS ENUM ('draft', 'sent', 'quotes_received', 'awarded', 'cancelled')")
-    op.execute("CREATE TYPE quotestatusenum AS ENUM ('pending', 'submitted', 'accepted', 'rejected')")
-    op.execute("CREATE TYPE contractstatusenum AS ENUM ('draft', 'active', 'expired', 'cancelled')")
-    op.execute("CREATE TYPE abcclassificationenum AS ENUM ('A', 'B', 'C')")
-    op.execute("CREATE TYPE forecastmethodenum AS ENUM ('simple_moving_average', 'weighted_moving_average', 'exponential_smoothing', 'manual')")
-    op.execute("CREATE TYPE pricechangesourceenum AS ENUM ('purchase_order', 'contract_update', 'manual_edit', 'quote')")
+    _create_enum_if_missing('rfqstatusenum', ('draft', 'sent', 'quotes_received', 'awarded', 'cancelled'))
+    _create_enum_if_missing('quotestatusenum', ('pending', 'submitted', 'accepted', 'rejected'))
+    _create_enum_if_missing('contractstatusenum', ('draft', 'active', 'expired', 'cancelled'))
+    _create_enum_if_missing('abcclassificationenum', ('A', 'B', 'C'))
+    _create_enum_if_missing('forecastmethodenum', ('simple_moving_average', 'weighted_moving_average', 'exponential_smoothing', 'manual'))
+    _create_enum_if_missing('pricechangesourceenum', ('purchase_order', 'contract_update', 'manual_edit', 'quote'))
     
     
     # 1. Supplier Performance
