@@ -47,7 +47,7 @@ class ConflictResponse(BaseModel):
     scheduled_end: datetime
 
 
-router = APIRouter(prefix="/schedule", tags=["Scheduling"])
+router = APIRouter(prefix="/api/manufacturing/schedule", tags=["Scheduling"])
 
 
 @router.post("/generate-operations/{mo_id}", response_model=List[ManufacturingOrderOperationResponse])

@@ -15,7 +15,7 @@ from app.schemas.manufacturing import (
 )
 from app.modules.manufacturing.application.services.operation_route_service import OperationRouteService
 
-router = APIRouter(prefix="/operation-routes", tags=["Operation Routes"])
+router = APIRouter(prefix="/api/manufacturing/operation-routes", tags=["Operation Routes"])
 
 
 @router.get("/", response_model=List[OperationRouteResponse])

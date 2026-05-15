@@ -46,7 +46,7 @@ class TestResponse(BaseModel):
     class Config:
         from_attributes = True
 
-router = APIRouter(prefix="/work-centers", tags=["Work Centers"])
+router = APIRouter(prefix="/api/manufacturing/work-centers", tags=["Work Centers"])
 
 
 @router.get("/", response_model=List[WorkCenterResponse])

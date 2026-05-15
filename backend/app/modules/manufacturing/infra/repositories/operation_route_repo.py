@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from app.models.manufacturing import OperationRoute
+from app.models.manufacturing import OperationRoute, RouteOperation
 from app.modules.manufacturing.domain.interfaces import OperationRouteRepository as OperationRouteRepositoryProtocol
 
 
@@ -20,14 +20,17 @@ class OperationRouteRepository:
         """Get operation route by ID with operations"""
         result = await self.db.execute(
             select(OperationRoute)
-            .options(selectinload(OperationRoute.route_operations))
+            .options(selectinload(OperationRoute.route_operations).selectinload(RouteOperation.work_center))
             .where(OperationRoute.id == route_id)
         )
         return result.scalar_one_or_none()
     
     async def get_all(self, skip: int = 0, limit: int = 100, active_only: bool = False) -> List[OperationRoute]:
         """Get all operation routes with pagination"""
-        query = select(OperationRoute).options(selectinload(OperationRoute.product))
+        query = select(OperationRoute).options(
+            selectinload(OperationRoute.product),
+            selectinload(OperationRoute.route_operations).selectinload(RouteOperation.work_center),
+        )
         
         if active_only:
             query = query.where(OperationRoute.is_active == True)
@@ -41,7 +44,7 @@ class OperationRouteRepository:
         """Get operation route for a product"""
         result = await self.db.execute(
             select(OperationRoute)
-            .options(selectinload(OperationRoute.route_operations))
+            .options(selectinload(OperationRoute.route_operations).selectinload(RouteOperation.work_center))
             .where(OperationRoute.product_id == product_id)
             .where(OperationRoute.is_active == True)
         )
@@ -51,7 +54,7 @@ class OperationRouteRepository:
         """Get operation route by BOM ID"""
         result = await self.db.execute(
             select(OperationRoute)
-            .options(selectinload(OperationRoute.route_operations))
+            .options(selectinload(OperationRoute.route_operations).selectinload(RouteOperation.work_center))
             .where(OperationRoute.bom_id == bom_id)
             .where(OperationRoute.is_active == True)
         )

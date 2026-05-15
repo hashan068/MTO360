@@ -62,7 +62,7 @@ class CycleTimeMetrics(BaseModel):
     trend: str  # improving, stable, degrading
 
 
-router = APIRouter(prefix="/analytics", tags=["Analytics"])
+router = APIRouter(prefix="/api/manufacturing/analytics", tags=["Analytics"])
 
 
 @router.get("/capacity-utilization", response_model=List[UtilizationDataPoint])

@@ -85,7 +85,7 @@ class WorkCenterQueueItem(BaseModel):
     quantity: Optional[int]
 
 
-router = APIRouter(prefix="/shop-floor", tags=["Shop Floor"])
+router = APIRouter(prefix="/api/manufacturing/shop-floor", tags=["Shop Floor"])
 
 
 @router.post("/operations/{operation_id}/start", response_model=OperationExecutionResponse)
