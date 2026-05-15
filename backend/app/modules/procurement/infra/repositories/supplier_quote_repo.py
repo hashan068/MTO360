@@ -7,7 +7,7 @@ from sqlalchemy import select, and_, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from app.models.procurement import SupplierQuote, QuoteStatusEnum
+from app.models.procurement import SupplierQuote, SupplierQuoteStatusEnum
 
 
 class SupplierQuoteRepository:
@@ -33,7 +33,7 @@ class SupplierQuoteRepository:
         )
         return result.scalar_one_or_none()
     
-    async def get_quotes_for_rfq(self, rfq_id: int, status: Optional[QuoteStatusEnum] = None) -> List[SupplierQuote]:
+    async def get_quotes_for_rfq(self, rfq_id: int, status: Optional[SupplierQuoteStatusEnum] = None) -> List[SupplierQuote]:
         """Get all quotes for an RFQ"""
         query = select(SupplierQuote).options(joinedload(SupplierQuote.supplier)).where(
             SupplierQuote.rfq_id == rfq_id
@@ -95,7 +95,7 @@ class SupplierQuoteRepository:
             .where(
                 and_(
                     SupplierQuote.rfq_id == rfq_id,
-                    SupplierQuote.status == QuoteStatusEnum.SUBMITTED
+                    SupplierQuote.status == SupplierQuoteStatusEnum.SUBMITTED
                 )
             )
             .order_by(SupplierQuote.unit_price)
@@ -103,7 +103,7 @@ class SupplierQuoteRepository:
         )
         return result.scalar_one_or_none()
     
-    async def count_quotes_for_rfq(self, rfq_id: int, status: Optional[QuoteStatusEnum] = None) -> int:
+    async def count_quotes_for_rfq(self, rfq_id: int, status: Optional[SupplierQuoteStatusEnum] = None) -> int:
         """Count quotes for an RFQ"""
         query = select(func.count(SupplierQuote.id)).where(SupplierQuote.rfq_id == rfq_id)
         
@@ -119,7 +119,7 @@ class SupplierQuoteRepository:
         if not quote:
             return None
         
-        quote.status = QuoteStatusEnum.ACCEPTED
+        quote.status = SupplierQuoteStatusEnum.ACCEPTED
         quote.is_awarded = True
         quote.awarded_at = datetime.utcnow()
         quote.award_justification = justification
@@ -135,7 +135,7 @@ class SupplierQuoteRepository:
         if not quote:
             return None
         
-        quote.status = QuoteStatusEnum.REJECTED
+        quote.status = SupplierQuoteStatusEnum.REJECTED
         quote.updated_at = datetime.utcnow()
         
         await self.db.commit()

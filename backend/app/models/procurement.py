@@ -26,8 +26,8 @@ from app.models.base import Base, TimestampMixin
 # Enumerations
 # ============================================================================
 
-class RFQStatusEnum(str, enum.Enum):
-    """RFQ status workflow"""
+class ProcurementRFQStatusEnum(str, enum.Enum):
+    """Procurement RFQ status workflow (component sourcing — distinct from sales RFQStatusEnum)"""
     DRAFT = "draft"
     SENT = "sent"
     QUOTES_RECEIVED = "quotes_received"
@@ -35,8 +35,8 @@ class RFQStatusEnum(str, enum.Enum):
     CANCELLED = "cancelled"
 
 
-class QuoteStatusEnum(str, enum.Enum):
-    """Quote status"""
+class SupplierQuoteStatusEnum(str, enum.Enum):
+    """Supplier quote status"""
     PENDING = "pending"
     SUBMITTED = "submitted"
     ACCEPTED = "accepted"
@@ -145,9 +145,9 @@ class ProcurementRFQ(Base, TimestampMixin):
     closing_datetime: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     
     # Status
-    status: Mapped[RFQStatusEnum] = mapped_column(
-        SQLEnum(RFQStatusEnum), 
-        default=RFQStatusEnum.DRAFT, 
+    status: Mapped[ProcurementRFQStatusEnum] = mapped_column(
+        SQLEnum(ProcurementRFQStatusEnum, name="procurement_rfq_status_enum"),
+        default=ProcurementRFQStatusEnum.DRAFT,
         nullable=False
     )
     
@@ -195,9 +195,9 @@ class SupplierQuote(Base, TimestampMixin):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     
     # Status
-    status: Mapped[QuoteStatusEnum] = mapped_column(
-        SQLEnum(QuoteStatusEnum), 
-        default=QuoteStatusEnum.PENDING, 
+    status: Mapped[SupplierQuoteStatusEnum] = mapped_column(
+        SQLEnum(SupplierQuoteStatusEnum, name="supplier_quote_status_enum"),
+        default=SupplierQuoteStatusEnum.PENDING,
         nullable=False
     )
     is_awarded: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

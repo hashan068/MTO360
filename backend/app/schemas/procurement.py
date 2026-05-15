@@ -9,8 +9,8 @@ from enum import Enum
 
 # Import enums from models
 from app.models.procurement import (
-    RFQStatusEnum,
-    QuoteStatusEnum,
+    ProcurementRFQStatusEnum,
+    SupplierQuoteStatusEnum,
     ContractStatusEnum,
     ABCClassificationEnum,
     ForecastMethodEnum,
@@ -97,7 +97,7 @@ class ProcurementRFQResponse(ProcurementRFQBase):
     """RFQ response"""
     id: int
     rfq_number: str
-    status: RFQStatusEnum
+    status: ProcurementRFQStatusEnum
     created_by: Optional[int] = None
     sent_at: Optional[datetime] = None
     awarded_at: Optional[datetime] = None
@@ -147,7 +147,7 @@ class SupplierQuoteUpdate(BaseModel):
 class SupplierQuoteResponse(SupplierQuoteBase):
     """Quote response"""
     id: int
-    status: QuoteStatusEnum
+    status: SupplierQuoteStatusEnum
     is_awarded: bool
     submitted_at: Optional[datetime] = None
     awarded_at: Optional[datetime] = None

@@ -337,7 +337,7 @@ class NonConformanceReport(Base, TimestampMixin):
         SQLEnum(NCRStatusEnum), default=NCRStatusEnum.OPEN, nullable=False
     )
     priority: Mapped[PriorityEnum] = mapped_column(
-        SQLEnum(PriorityEnum), default=PriorityEnum.NORMAL, nullable=False
+        SQLEnum(PriorityEnum, name="quality_priority_enum"), default=PriorityEnum.NORMAL, nullable=False
     )
     
     # Investigation
@@ -513,7 +513,7 @@ class CorrectiveAction(Base, TimestampMixin):
         SQLEnum(CAPAStatusEnum), default=CAPAStatusEnum.OPEN, nullable=False
     )
     priority: Mapped[PriorityEnum] = mapped_column(
-        SQLEnum(PriorityEnum), default=PriorityEnum.NORMAL, nullable=False
+        SQLEnum(PriorityEnum, name="quality_priority_enum"), default=PriorityEnum.NORMAL, nullable=False
     )
     
     # Root cause analysis

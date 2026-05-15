@@ -64,7 +64,7 @@ class ManufacturingOrder(Base, TimestampMixin):
     __tablename__ = "manufacturing_orders"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    sales_order_item_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("sales_order_items.id"), nullable=True)
+    sales_order_item_id: Mapped[int] = mapped_column(Integer, ForeignKey("sales_order_items.id", ondelete="CASCADE"), nullable=False)
     product_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("products.id"), nullable=True)
     quantity: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     bom_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("bill_of_materials.id"), nullable=True)
@@ -164,7 +164,7 @@ class BOMItem(Base):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     bill_of_material_id: Mapped[int] = mapped_column(Integer, ForeignKey("bill_of_materials.id"), nullable=False)
-    component_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("components.id"), nullable=True, default=1)
+    component_id: Mapped[int] = mapped_column(Integer, ForeignKey("components.id"), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=False)
     
     # Relationships

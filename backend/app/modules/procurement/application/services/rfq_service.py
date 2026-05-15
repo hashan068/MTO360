@@ -9,7 +9,7 @@ from sqlalchemy import select
 
 from app.models.procurement import (
     ProcurementRFQ, SupplierQuote,
-    RFQStatusEnum, QuoteStatusEnum,
+    ProcurementRFQStatusEnum, SupplierQuoteStatusEnum,
 )
 from app.models.inventory import PurchaseOrder, Supplier, Component, PurchaseOrderStatusEnum
 from app.modules.procurement.infra.repositories.rfq_repo import RFQRepository
@@ -64,7 +64,7 @@ class RFQService:
             'specifications': specifications,
             'internal_notes': internal_notes,
             'created_by': created_by,
-            'status': RFQStatusEnum.DRAFT
+            'status': ProcurementRFQStatusEnum.DRAFT
         }
         
         rfq = await self.rfq_repo.create(rfq_data)
@@ -74,7 +74,7 @@ class RFQService:
             quote_data = {
                 'rfq_id': rfq.id,
                 'supplier_id': supplier_id,
-                'status': QuoteStatusEnum.PENDING,
+                'status': SupplierQuoteStatusEnum.PENDING,
                 'unit_price': Decimal('0.00'),  # Will be updated when quote is submitted
                 'lead_time_days': 0,
                 'minimum_order_quantity': 1,
@@ -95,12 +95,12 @@ class RFQService:
         if not rfq:
             raise ValueError(f"RFQ {rfq_id} not found")
         
-        if rfq.status != RFQStatusEnum.DRAFT:
+        if rfq.status != ProcurementRFQStatusEnum.DRAFT:
             raise ValueError(f"Can only send RFQs in DRAFT status. Current status: {rfq.status}")
         
         # Update status
         update_data = {
-            'status': RFQStatusEnum.SENT,
+            'status': ProcurementRFQStatusEnum.SENT,
             'sent_at': datetime.utcnow()
         }
         
@@ -143,7 +143,7 @@ class RFQService:
         if not rfq:
             raise ValueError(f"RFQ {rfq_id} not found")
         
-        if rfq.status not in [RFQStatusEnum.SENT, RFQStatusEnum.QUOTES_RECEIVED]:
+        if rfq.status not in [ProcurementRFQStatusEnum.SENT, ProcurementRFQStatusEnum.QUOTES_RECEIVED]:
             raise ValueError(f"RFQ is not open for quotes. Status: {rfq.status}")
         
         if rfq.closing_datetime < datetime.utcnow():
@@ -162,15 +162,15 @@ class RFQService:
             'minimum_order_quantity': minimum_order_quantity,
             'quote_valid_until': quote_valid_until,
             'notes': notes,
-            'status': QuoteStatusEnum.SUBMITTED,
+            'status': SupplierQuoteStatusEnum.SUBMITTED,
             'submitted_at': datetime.utcnow()
         }
         
         quote = await self.quote_repo.update(quote.id, update_data)
         
         # Update RFQ status if this is the first quote
-        if rfq.status == RFQStatusEnum.SENT:
-            await self.rfq_repo.update(rfq_id, {'status': RFQStatusEnum.QUOTES_RECEIVED})
+        if rfq.status == ProcurementRFQStatusEnum.SENT:
+            await self.rfq_repo.update(rfq_id, {'status': ProcurementRFQStatusEnum.QUOTES_RECEIVED})
         
         return quote
     
@@ -191,7 +191,7 @@ class RFQService:
             raise ValueError(f"RFQ {rfq_id} not found")
         
         # Get all submitted quotes
-        quotes = await self.quote_repo.get_quotes_for_rfq(rfq_id, QuoteStatusEnum.SUBMITTED)
+        quotes = await self.quote_repo.get_quotes_for_rfq(rfq_id, SupplierQuoteStatusEnum.SUBMITTED)
         
         if not quotes:
             return {
@@ -274,7 +274,7 @@ class RFQService:
             if not rfq:
                 raise ValueError(f"RFQ {rfq_id} not found")
             
-            if rfq.status not in [RFQStatusEnum.SENT, RFQStatusEnum.QUOTES_RECEIVED]:
+            if rfq.status not in [ProcurementRFQStatusEnum.SENT, ProcurementRFQStatusEnum.QUOTES_RECEIVED]:
                 raise ValueError(f"Cannot award RFQ with status {rfq.status}")
             
             # Verify quote belongs to this RFQ
@@ -283,14 +283,14 @@ class RFQService:
             if not quote or quote.rfq_id != rfq_id:
                 raise ValueError(f"Quote {quote_id} not found for RFQ {rfq_id}")
             
-            if quote.status != QuoteStatusEnum.SUBMITTED:
+            if quote.status != SupplierQuoteStatusEnum.SUBMITTED:
                 raise ValueError(f"Quote must be in SUBMITTED status. Current: {quote.status}")
             
             # Award the winning quote
             awarded_quote = await self.quote_repo.award_quote(quote_id, justification)
             
             # Reject other quotes
-            other_quotes = await self.quote_repo.get_quotes_for_rfq(rfq_id, QuoteStatusEnum.SUBMITTED)
+            other_quotes = await self.quote_repo.get_quotes_for_rfq(rfq_id, SupplierQuoteStatusEnum.SUBMITTED)
             for other_quote in other_quotes:
                 if other_quote.id != quote_id:
                     await self.quote_repo.reject_quote(other_quote.id)
@@ -311,7 +311,7 @@ class RFQService:
             
             # Update RFQ status
             await self.rfq_repo.update(rfq_id, {
-                'status': RFQStatusEnum.AWARDED,
+                'status': ProcurementRFQStatusEnum.AWARDED,
                 'awarded_at': datetime.utcnow()
             })
         
@@ -336,11 +336,11 @@ self, rfq_id: int, reason: str, cancelled_by: int
         if not rfq:
             raise ValueError(f"RFQ {rfq_id} not found")
         
-        if rfq.status == RFQStatusEnum.AWARDED:
+        if rfq.status == ProcurementRFQStatusEnum.AWARDED:
             raise ValueError("Cannot cancel an awarded RFQ")
         
         update_data = {
-            'status': RFQStatusEnum.CANCELLED,
+            'status': ProcurementRFQStatusEnum.CANCELLED,
             'cancelled_at': datetime.utcnow(),
             'cancellation_reason': reason
         }
@@ -353,7 +353,7 @@ self, rfq_id: int, reason: str, cancelled_by: int
     
     async def list_rfqs(
         self,
-        status: Optional[RFQStatusEnum] = None,
+        status: Optional[ProcurementRFQStatusEnum] = None,
         component_id: Optional[int] = None,
         limit: int = 50,
         offset: int = 0

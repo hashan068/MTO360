@@ -7,7 +7,7 @@ from sqlalchemy import select, and_, or_, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from app.models.procurement import ProcurementRFQ, RFQStatusEnum
+from app.models.procurement import ProcurementRFQ, ProcurementRFQStatusEnum
 
 
 class RFQRepository:
@@ -43,7 +43,7 @@ class RFQRepository:
     
     async def list_rfqs(
         self,
-        status: Optional[RFQStatusEnum] = None,
+        status: Optional[ProcurementRFQStatusEnum] = None,
         component_id: Optional[int] = None,
         created_by: Optional[int] = None,
         limit: int = 50,
@@ -99,7 +99,7 @@ class RFQRepository:
         result = await self.db.execute(
             select(ProcurementRFQ).where(
                 and_(
-                    ProcurementRFQ.status == RFQStatusEnum.SENT,
+                    ProcurementRFQ.status == ProcurementRFQStatusEnum.SENT,
                     ProcurementRFQ.closing_datetime > now
                 )
             )
@@ -115,7 +115,7 @@ class RFQRepository:
         result = await self.db.execute(
             select(ProcurementRFQ).where(
                 and_(
-                    ProcurementRFQ.status == RFQStatusEnum.SENT,
+                    ProcurementRFQ.status == ProcurementRFQStatusEnum.SENT,
                     ProcurementRFQ.closing_datetime > now,
                     ProcurementRFQ.closing_datetime <= closing_threshold
                 )

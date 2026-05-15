@@ -18,7 +18,7 @@ from app.schemas.procurement import (
     RFQAwardRequest,
     RFQAwardResponse,
 )
-from app.models.procurement import RFQStatusEnum
+from app.models.procurement import ProcurementRFQStatusEnum
 from app.modules.procurement.application.services.rfq_service import RFQService
 
 
@@ -59,7 +59,7 @@ async def create_rfq(
 
 @router.get("", response_model=List[ProcurementRFQResponse])
 async def list_rfqs(
-    status_filter: Optional[RFQStatusEnum] = Query(None, alias="status"),
+    status_filter: Optional[ProcurementRFQStatusEnum] = Query(None, alias="status"),
     component_id: Optional[int] = None,
     limit: int = Query(50, ge=1, le=100),
     offset: int = Query(0, ge=0),
