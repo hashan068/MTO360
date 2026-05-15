@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.config.database import get_db
+from app.config.database import get_sync_db as get_db
 from app.modules.quality.application.services import QualityAnalyticsService
 
 router = APIRouter(prefix="/api/quality/analytics", tags=["Quality - Analytics"])

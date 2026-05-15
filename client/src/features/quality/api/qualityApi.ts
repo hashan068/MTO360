@@ -152,7 +152,9 @@ export const qualityApi = {
     status?: string;
     owner_id?: number;
   }): Promise<CAPA[]> => {
-    const { data } = await axios.get(`${API_BASE}/capas/search`, { params: filters });
+    const { data } = await axios.get(`${API_BASE}/capas/`, {
+      params: { status_filter: filters?.status, owner_id: filters?.owner_id },
+    });
     return data;
   },
 

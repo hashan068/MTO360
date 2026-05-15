@@ -163,7 +163,7 @@ class NCRService:
         )
         
         # Create quality hold if quarantine disposition
-        if ncr.disposition == DispositionEnum.QUARANTINE:
+        if ncr.disposition == DispositionEnum.REWORK:
             self._create_quality_hold_for_ncr(ncr)
         
         return updated_ncr

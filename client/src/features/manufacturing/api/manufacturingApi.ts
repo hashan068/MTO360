@@ -20,7 +20,7 @@ import type {
   CycleTimeMetrics,
 } from '@/types/manufacturing';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = import.meta.env.VITE_API_URL || '';
 
 // Create axios instance
 const apiClient = axios.create({

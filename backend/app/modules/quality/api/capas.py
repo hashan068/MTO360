@@ -5,7 +5,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.config.database import get_db
+from app.config.database import get_sync_db as get_db
 from app.middleware.auth import get_current_user_id
 from app.schemas.quality import (
     CAPACreate,

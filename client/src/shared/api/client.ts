@@ -11,7 +11,7 @@ type RequestConfigWithRetry = AxiosRequestConfig & { _retry?: boolean };
 
 const baseURL = import.meta.env.VITE_API_URL;
 
-if (!baseURL) {
+if (baseURL === undefined) {
   console.warn('VITE_API_URL is not defined. API requests will fail until it is set.');
 }
 

@@ -3,7 +3,7 @@ Defect Service - Application Layer
 Business logic for defect management and analytics
 """
 from typing import Optional, List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 
 from app.models.quality import Defect, DefectStatusEnum
@@ -272,4 +272,3 @@ class DefectService:
         pass
 
 
-from datetime import timedelta  # Add this import at the top if not already there

@@ -2,7 +2,9 @@
 Database configuration and session management
 """
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from typing import AsyncGenerator
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from typing import AsyncGenerator, Generator
 
 from app.config.settings import settings
 from app.models.base import Base
@@ -26,6 +28,24 @@ AsyncSessionLocal = async_sessionmaker(
     autocommit=False,
     autoflush=False,
 )
+
+
+_sync_url = settings.get_database_url().replace("+asyncpg", "")
+_sync_engine = create_engine(_sync_url, pool_pre_ping=True, pool_size=5)
+SyncSessionLocal = sessionmaker(bind=_sync_engine, autocommit=False, autoflush=False)
+
+
+def get_sync_db() -> Generator[Session, None, None]:
+    """Sync DB session for quality module (uses legacy .query() ORM style)."""
+    db = SyncSessionLocal()
+    try:
+        yield db
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+    finally:
+        db.close()
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
